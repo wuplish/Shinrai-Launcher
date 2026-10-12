@@ -1,0 +1,4 @@
+mp_username:wuplish123
+gfx_vsync:0
+gfx_max_framerate:0
+gfx_fancygraphics:0

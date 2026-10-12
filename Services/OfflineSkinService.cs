@@ -350,12 +350,14 @@ public static class OfflineSkinService
             string packDir = Path.Combine(mcDir, "resourcepacks", "ShinraiLocalSkin");
             Directory.CreateDirectory(packDir);
 
-            // 1. Write pack.mcmeta (supported across 1.8 - 1.21.4+)
+            // 1. Write pack.mcmeta (supported across 1.8 - 1.21.11+)
             string packMcmeta = """
             {
               "pack": {
                 "pack_format": 15,
-                "supported_formats": { "min_inclusive": 1, "max_inclusive": 99 },
+                "supported_formats": [1, 64],
+                "min_format": 1,
+                "max_format": 99,
                 "description": "§c§lShinrai Offline Skin & Cape Pack (100% Local)"
               }
             }

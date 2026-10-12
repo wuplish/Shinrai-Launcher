@@ -46,15 +46,24 @@ public class LauncherConfig
 
     public static string GetPortableRootDir()
     {
-        string baseDir = AppDomain.CurrentDomain.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-        string dirName = Path.GetFileName(baseDir);
-
-        // If launched from Portable_Build/ or bin/, use the main folder above it if game_data exists there
-        if (dirName.Equals("Portable_Build", StringComparison.OrdinalIgnoreCase))
+        static bool HasPopulatedVersions(string dir)
         {
-            string? parent = Directory.GetParent(baseDir)?.FullName;
-            if (!string.IsNullOrEmpty(parent) && Directory.Exists(Path.Combine(parent, "game_data")))
-                return parent;
+            string vDir = Path.Combine(dir, "game_data", ".minecraft", "versions");
+            return Directory.Exists(vDir) && Directory.GetDirectories(vDir).Length > 0;
+        }
+
+        string baseDir = AppDomain.CurrentDomain.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        if (HasPopulatedVersions(baseDir))
+            return baseDir;
+
+        string? current = baseDir;
+        for (int i = 0; i < 4; i++)
+        {
+            current = Directory.GetParent(current)?.FullName;
+            if (string.IsNullOrEmpty(current))
+                break;
+            if (HasPopulatedVersions(current))
+                return current;
         }
 
         return AppDomain.CurrentDomain.BaseDirectory;

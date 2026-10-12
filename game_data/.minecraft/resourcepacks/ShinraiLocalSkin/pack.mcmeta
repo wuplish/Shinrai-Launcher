@@ -1,7 +1,9 @@
 {
   "pack": {
     "pack_format": 15,
-    "supported_formats": { "min_inclusive": 1, "max_inclusive": 99 },
+    "supported_formats": [1, 64],
+    "min_format": 1,
+    "max_format": 99,
     "description": "§c§lShinrai Offline Skin & Cape Pack (100% Local)"
   }
 }

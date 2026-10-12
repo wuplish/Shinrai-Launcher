@@ -370,14 +370,20 @@ public static class GitHubReleaseService
         progress(10, $"Minecraft {targetVersionId}.jar indiriliyor...");
         await DownloadFileSimpleAsync(clientUrl, clientJarPath, ct);
 
-        // 2. Download Asset Index
+        // 2. Download Asset Index & Local Asset Objects
         if (root.TryGetProperty("assetIndex", out var aiElem))
         {
             string aiId = aiElem.GetProperty("id").GetString()!;
             string aiUrl = aiElem.GetProperty("url").GetString()!;
             string indexPath = Path.Combine(mcDir, "assets", "indexes", $"{aiId}.json");
+            string fullIndexPath = Path.Combine(mcDir, "assets", "indexes", $"{aiId}.full.json");
             Directory.CreateDirectory(Path.GetDirectoryName(indexPath)!);
-            await DownloadFileSimpleAsync(aiUrl, indexPath, ct);
+            await DownloadFileSimpleAsync(aiUrl, fullIndexPath, ct);
+            if (!File.Exists(indexPath))
+                File.Copy(fullIndexPath, indexPath, overwrite: true);
+
+            progress(18, $"Minecraft {targetVersionId} temel doku, font ve ses varlıkları indiriliyor...");
+            await JavaLaunchEngine.EnsureLocalAssetsAndSanitizeIndexAsync(mcDir, aiId, log);
         }
 
         // 3. Download all Windows Libraries & Natives

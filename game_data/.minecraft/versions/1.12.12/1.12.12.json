@@ -1,6 +1,0 @@
-﻿{
-  "id": "1.12.12",
-  "inheritsFrom": "1.12.2",
-  "type": "release",
-  "mainClass": "net.minecraft.client.main.Main"
-}

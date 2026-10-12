@@ -65,10 +65,10 @@ public static class LunarOptimizerService
         string optionsPath = Path.Combine(mcDir, "options.txt");
         var lines = File.Exists(optionsPath) ? File.ReadAllLines(optionsPath).ToList() : new List<string>();
 
-        SetKeyVal(lines, "gamma", fullbright ? "10.0" : "1.0");
+        SetKeyVal(lines, "gamma", fullbright ? "1.0" : "0.5");
         SetKeyVal(lines, "enableVsync", vsyncOff ? "false" : "true");
         SetKeyVal(lines, "maxFps", vsyncOff ? "260" : "120");
-        SetKeyVal(lines, "renderClouds", noFog ? "\"off\"" : "\"fast\"");
+        SetKeyVal(lines, "renderClouds", noFog ? "\"false\"" : "\"fast\"");
         SetKeyVal(lines, "graphicsMode", "0"); // Fast
         SetKeyVal(lines, "particles", pvpParticles ? "1" : "0"); // Decreased particles
         SetKeyVal(lines, "entityShadows", "false");

@@ -144,31 +144,45 @@ public static class JavaLaunchEngine
         };
     }
 
-    public static void ApplyFpsBoosterToOptionsTxt(string mcDir, Action<string>? log = null)
+    public static void ApplyFpsBoosterToOptionsTxt(string mcDir, string? targetVersionId = null, Action<string>? log = null)
     {
         try
         {
             string optionsPath = Path.Combine(mcDir, "options.txt");
             var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             var existingLines = new List<string>();
+            bool isLegacy112 = !string.IsNullOrWhiteSpace(targetVersionId) && targetVersionId.StartsWith("1.12", StringComparison.OrdinalIgnoreCase);
 
             if (File.Exists(optionsPath))
             {
-                existingLines = File.ReadAllLines(optionsPath).ToList();
-                foreach (string line in existingLines)
+                foreach (string line in File.ReadAllLines(optionsPath))
                 {
                     int sep = line.IndexOf(':');
                     if (sep > 0)
                     {
-                        dict[line[..sep]] = line[(sep + 1)..];
+                        string k = line[..sep];
+                        string v = line[(sep + 1)..];
+                        // Prevent 1.21 string keybinds (key.keyboard.*) from polluting 1.12 integer keybinds and vice-versa
+                        if (k.StartsWith("key_", StringComparison.OrdinalIgnoreCase))
+                        {
+                            bool isModernKeybind = v.StartsWith("key.", StringComparison.OrdinalIgnoreCase);
+                            if (isLegacy112 && isModernKeybind) continue;
+                            if (!isLegacy112 && !isModernKeybind && !string.IsNullOrWhiteSpace(targetVersionId)) continue;
+                        }
+                        if (k.Equals("lastServer", StringComparison.OrdinalIgnoreCase) && string.IsNullOrWhiteSpace(v))
+                            continue;
+
+                        dict[k] = v;
                     }
+                    existingLines.Add(line);
                 }
             }
 
+            SetOption(existingLines, "gamma", "1.0");
             SetOption(existingLines, "enableVsync", "false");
             SetOption(existingLines, "maxFps", "260");
             SetOption(existingLines, "graphicsMode", "0");
-            SetOption(existingLines, "renderClouds", "\"off\"");
+            SetOption(existingLines, "renderClouds", isLegacy112 ? "false" : "\"false\"");
             SetOption(existingLines, "entityShadows", "false");
             SetOption(existingLines, "biomeBlendRadius", "0");
             if (!dict.ContainsKey("renderDistance"))
@@ -197,6 +211,164 @@ public static class JavaLaunchEngine
             }
         }
         lines.Add($"{key}:{value}");
+    }
+
+    private static readonly string[] CoreSoundPrefixes =
+    [
+        "minecraft/sounds/ui/",
+        "minecraft/sounds/random/",
+        "minecraft/sounds/damage/",
+        "minecraft/sounds/step/",
+        "minecraft/sounds/dig/",
+        "minecraft/sounds/fire/",
+        "minecraft/sounds/liquid/",
+        "minecraft/sounds/note/",
+        "minecraft/sounds/item/",
+        "minecraft/sounds/portal/"
+    ];
+
+    private static bool ShouldIncludeEssentialOrCoreAsset(string name)
+    {
+        if (!name.StartsWith("minecraft/sounds/", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!name.Contains("/lang/", StringComparison.OrdinalIgnoreCase) ||
+                name.EndsWith("/tr_tr.json", StringComparison.OrdinalIgnoreCase) ||
+                name.EndsWith("/en_us.json", StringComparison.OrdinalIgnoreCase) ||
+                name.EndsWith("/tr_tr.lang", StringComparison.OrdinalIgnoreCase) ||
+                name.EndsWith("/en_us.lang", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        foreach (string pref in CoreSoundPrefixes)
+        {
+            if (name.StartsWith(pref, StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+        return false;
+    }
+
+    public static async Task EnsureLocalAssetsAndSanitizeIndexAsync(string mcDir, string assetIndex, Action<string>? log = null)
+    {
+        string indexesDir = Path.Combine(mcDir, "assets", "indexes");
+        string objectsDir = Path.Combine(mcDir, "assets", "objects");
+        Directory.CreateDirectory(indexesDir);
+        Directory.CreateDirectory(objectsDir);
+
+        string activeIndexPath = Path.Combine(indexesDir, $"{assetIndex}.json");
+        string fullIndexPath = Path.Combine(indexesDir, $"{assetIndex}.full.json");
+
+        if (!File.Exists(fullIndexPath) && File.Exists(activeIndexPath))
+        {
+            File.Copy(activeIndexPath, fullIndexPath, overwrite: true);
+        }
+
+        string sourceIndexPath = File.Exists(fullIndexPath) ? fullIndexPath : activeIndexPath;
+        if (!File.Exists(sourceIndexPath))
+            return;
+
+        string sysObjectsDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".minecraft", "assets", "objects");
+
+        var missingHashes = new List<string>();
+        using (var doc = JsonDocument.Parse(await File.ReadAllTextAsync(sourceIndexPath)))
+        {
+            if (doc.RootElement.TryGetProperty("objects", out var objs))
+            {
+                var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var prop in objs.EnumerateObject())
+                {
+                    if (!ShouldIncludeEssentialOrCoreAsset(prop.Name))
+                        continue;
+
+                    string? hash = prop.Value.TryGetProperty("hash", out var hProp) ? hProp.GetString() : null;
+                    if (string.IsNullOrWhiteSpace(hash) || hash.Length < 2 || !seen.Add(hash))
+                        continue;
+
+                    string prefix = hash[..2];
+                    string localObjPath = Path.Combine(objectsDir, prefix, hash);
+                    if (File.Exists(localObjPath) && new FileInfo(localObjPath).Length > 0)
+                        continue;
+
+                    string sysObjPath = Path.Combine(sysObjectsDir, prefix, hash);
+                    if (File.Exists(sysObjPath))
+                    {
+                        Directory.CreateDirectory(Path.GetDirectoryName(localObjPath)!);
+                        File.Copy(sysObjPath, localObjPath, overwrite: true);
+                        continue;
+                    }
+
+                    missingHashes.Add(hash);
+                }
+            }
+        }
+
+        if (missingHashes.Count > 0)
+        {
+            log?.Invoke($"[Varlık Tamamlayıcı] {assetIndex} için {missingHashes.Count} temel doku/font/ses varlığı indiriliyor...");
+            using var http = new System.Net.Http.HttpClient { Timeout = TimeSpan.FromMinutes(3) };
+            using var sem = new SemaphoreSlim(24);
+            var tasks = missingHashes.Select(async hash =>
+            {
+                await sem.WaitAsync();
+                try
+                {
+                    string prefix = hash[..2];
+                    string dest = Path.Combine(objectsDir, prefix, hash);
+                    Directory.CreateDirectory(Path.GetDirectoryName(dest)!);
+                    byte[] bytes = await http.GetByteArrayAsync($"https://resources.download.minecraft.net/{prefix}/{hash}");
+                    await File.WriteAllBytesAsync(dest, bytes);
+                }
+                catch
+                {
+                    // Offline or unreachable; sanitizer below will exclude missing hashes so LinkFileSystem never crashes
+                }
+                finally
+                {
+                    sem.Release();
+                }
+            });
+            await Task.WhenAll(tasks);
+        }
+
+        // Write active index containing ONLY objects physically present in assets/objects so Minecraft 1.21+ LinkFileSystem never throws NoSuchFileException
+        using (var doc = JsonDocument.Parse(await File.ReadAllTextAsync(sourceIndexPath)))
+        await using (var ms = new MemoryStream())
+        {
+            await using (var writer = new Utf8JsonWriter(ms, new JsonWriterOptions { Indented = true }))
+            {
+                writer.WriteStartObject();
+                foreach (var topProp in doc.RootElement.EnumerateObject())
+                {
+                    if (topProp.NameEquals("objects"))
+                    {
+                        writer.WritePropertyName("objects");
+                        writer.WriteStartObject();
+                        foreach (var objProp in topProp.Value.EnumerateObject())
+                        {
+                            string? h = objProp.Value.TryGetProperty("hash", out var hp) ? hp.GetString() : null;
+                            if (!string.IsNullOrWhiteSpace(h) && h.Length >= 2)
+                            {
+                                string p = Path.Combine(objectsDir, h[..2], h);
+                                if (File.Exists(p) && new FileInfo(p).Length > 0)
+                                {
+                                    writer.WritePropertyName(objProp.Name);
+                                    objProp.Value.WriteTo(writer);
+                                }
+                            }
+                        }
+                        writer.WriteEndObject();
+                    }
+                    else
+                    {
+                        topProp.WriteTo(writer);
+                    }
+                }
+                writer.WriteEndObject();
+            }
+            await File.WriteAllBytesAsync(activeIndexPath, ms.ToArray());
+        }
     }
 
     private static async Task EnsureMissingLibrariesDownloadedAsync(JsonElement rootElem, string librariesDir, Action<string> log)
@@ -306,7 +478,7 @@ public static class JavaLaunchEngine
 
         OfflineSkinService.ApplyOfflineSkinToJava(config, log);
         if (config.AutoApplyFpsOptions)
-            ApplyFpsBoosterToOptionsTxt(mcDir, log);
+            ApplyFpsBoosterToOptionsTxt(mcDir, versionId, log);
 
         using var childDoc = JsonDocument.Parse(await File.ReadAllTextAsync(jsonPath));
         var childRoot = childDoc.RootElement;
@@ -376,10 +548,12 @@ public static class JavaLaunchEngine
             string sysMcDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".minecraft");
             string sysLibrariesDir = Path.Combine(sysMcDir, "libraries");
 
-            // Ensure all required libraries exist locally
+            // Ensure all required libraries & local asset objects exist locally
             await EnsureMissingLibrariesDownloadedAsync(childRoot, librariesDir, log);
             if (parentRoot.HasValue)
                 await EnsureMissingLibrariesDownloadedAsync(parentRoot.Value, librariesDir, log);
+
+            await EnsureLocalAssetsAndSanitizeIndexAsync(mcDir, assetIndex, log);
 
             var classPathList = new List<string>();
             var addedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -483,6 +657,7 @@ public static class JavaLaunchEngine
                 allArgs.Add("-Dminecraft.api.account.host=http://127.0.0.1");
                 allArgs.Add("-Dminecraft.api.session.host=http://127.0.0.1");
                 allArgs.Add("-Dminecraft.api.services.host=http://127.0.0.1");
+                allArgs.Add("-Dminecraft.api.profiles.host=http://127.0.0.1");
             }
 
             if (mainClass.Contains("fabricmc", StringComparison.OrdinalIgnoreCase))
