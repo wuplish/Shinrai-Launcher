@@ -666,6 +666,18 @@ public static class JavaLaunchEngine
 
     private static bool IsLibraryAllowedOnWindows(JsonElement lib)
     {
+        if (lib.TryGetProperty("name", out var nElem))
+        {
+            string n = nElem.GetString() ?? "";
+            if (n.Contains("natives-windows-arm64", StringComparison.OrdinalIgnoreCase) ||
+                n.Contains("natives-windows-x86", StringComparison.OrdinalIgnoreCase) ||
+                n.Contains("natives-macos", StringComparison.OrdinalIgnoreCase) ||
+                n.Contains("natives-linux", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+        }
+
         if (!lib.TryGetProperty("rules", out var rulesArr) || rulesArr.ValueKind != JsonValueKind.Array)
             return true;
 
