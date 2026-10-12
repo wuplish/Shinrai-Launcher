@@ -188,26 +188,12 @@ public static class LunarOptimizerService
         CancellationToken ct = default)
     {
         string mcDir = config.GetMinecraftDir();
-        string appDataMc = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".minecraft");
 
-        // 1. Setup 1.21.11 Base (Import from %AppData%\.minecraft if present, else download from Mojang)
-        string local12111Json = Path.Combine(mcDir, "versions", "1.21.11", "1.21.11.json");
-        if (!File.Exists(local12111Json))
-        {
-            string sys12111Json = Path.Combine(appDataMc, "versions", "1.21.11", "1.21.11.json");
-            if (File.Exists(sys12111Json))
-            {
-                progress(10, "Sistemdeki 1.21.11 sürümü portable klasöre aktarılıyor...");
-                await GitHubReleaseService.ImportVersionFromSystemAsync("1.21.11", appDataMc, config, progress, log);
-            }
-            else
-            {
-                progress(10, "Minecraft 1.21.11 indiriliyor...");
-                await GitHubReleaseService.DownloadVanillaVersionForOfflineUseAsync("1.21.11", config, progress, log, ct);
-            }
-        }
+        // 1. Ensure 1.21.11 + all 107 libraries are downloaded locally
+        progress(10, "Minecraft 1.21.11 ve tüm kütüphaneleri doğrulanıyor/indiriliyor...");
+        await GitHubReleaseService.DownloadVanillaVersionForOfflineUseAsync("1.21.11", config, progress, log, ct);
 
-        // 2. Install Fabric Loader for 1.21.11 ("1.21.11-Sodium-Fabric")
+        // 2. Install Fabric Loader for 1.21.11 ("1.21.11-Sodium")
         progress(35, "1.21.11 için Fabric Loader ve kütüphaneleri kuruluyor...");
         await InstallFabricProfileAsync("1.21.11", "1.21.11-Sodium", mcDir, log, ct);
 
@@ -215,17 +201,20 @@ public static class LunarOptimizerService
         progress(55, "1.21.11 için Sodium, Lithium, FerriteCore ve EntityCulling indiriliyor...");
         await DownloadModrinthModsForVersionAsync("1.21.11", Path.Combine(mcDir, "mods"), log, ct);
 
-        // 4. Setup 1.12.2 (and create alias 1.12.12 so both appear)
-        string local1122Json = Path.Combine(mcDir, "versions", "1.12.2", "1.12.2.json");
-        if (!File.Exists(local1122Json))
+        // 4. Ensure 1.12.2 (and 1.12.12 alias) + all libraries are downloaded locally
+        progress(70, "Minecraft 1.12.2 (1.12.12 PvP/OptiFine) ve kütüphaneleri indiriliyor...");
+        await GitHubReleaseService.DownloadVanillaVersionForOfflineUseAsync("1.12.2", config, progress, log, ct);
+
+        // 5. Ensure Portable Java 21 is present in game_data/runtime/java-21
+        if (JavaLaunchEngine.FindJavaExecutable(config, 21) == null)
         {
-            progress(75, "Minecraft 1.12.2 (1.12.12 PvP/OptiFine Ready) indiriliyor...");
-            await GitHubReleaseService.DownloadVanillaVersionForOfflineUseAsync("1.12.2", config, progress, log, ct);
+            progress(85, "Portable Java 21 ('game_data/runtime/java-21') indiriliyor...");
+            await GitHubReleaseService.DownloadPortableJavaJreAsync(21, config, progress, log, ct);
         }
 
         // Apply all Lunar FPS settings
         ApplyAllLunarOptimizations(mcDir, GetDefaultLunarMods(), log);
-        progress(100, "1.21.11 (Sodium+Fabric+Vanilla) ve 1.12.2 tüm FPS ayarlarıyla hazır!");
+        progress(100, "1.21.11 (Sodium+Fabric+Vanilla), 1.12.2 ve Portable Java tamamen hazır!");
     }
 
     public static async Task InstallFabricProfileAsync(
@@ -235,7 +224,6 @@ public static class LunarOptimizerService
         Action<string> log,
         CancellationToken ct = default)
     {
-        // Get latest loader version for gameVersion
         string loadersJson = await Http.GetStringAsync($"https://meta.fabricmc.net/v2/versions/loader/{gameVersion}", ct);
         using var loadersDoc = JsonDocument.Parse(loadersJson);
         if (loadersDoc.RootElement.GetArrayLength() == 0)
@@ -245,16 +233,15 @@ public static class LunarOptimizerService
         string profileUrl = $"https://meta.fabricmc.net/v2/versions/loader/{gameVersion}/{loaderVer}/profile/json";
         string profileJson = await Http.GetStringAsync(profileUrl, ct);
 
-        // Customize profile ID to customProfileId (e.g. "1.21.11-Sodium")
         using var profDoc = JsonDocument.Parse(profileJson);
         var root = profDoc.RootElement;
 
         string targetVerDir = Path.Combine(mcDir, "versions", customProfileId);
         Directory.CreateDirectory(targetVerDir);
 
-        string modifiedJson = profileJson.Replace(
-            $"\"id\": \"fabric-loader-{loaderVer}-{gameVersion}\"",
-            $"\"id\": \"{customProfileId}\"");
+        string modifiedJson = profileJson
+            .Replace($"\"id\":\"fabric-loader-{loaderVer}-{gameVersion}\"", $"\"id\":\"{customProfileId}\"")
+            .Replace($"\"id\": \"fabric-loader-{loaderVer}-{gameVersion}\"", $"\"id\": \"{customProfileId}\"");
 
         await File.WriteAllTextAsync(Path.Combine(targetVerDir, $"{customProfileId}.json"), modifiedJson, ct);
 

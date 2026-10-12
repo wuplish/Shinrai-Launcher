@@ -97,66 +97,22 @@ public static class JavaLaunchEngine
         if (!string.IsNullOrWhiteSpace(config.CustomJavaExePath) && File.Exists(config.CustomJavaExePath))
             return config.CustomJavaExePath;
 
-        // 2. Portable runtime directory inside game_data/runtime
+        // 2. Exact Portable runtime directory inside game_data/runtime/java-{major}
         string runtimeDir = config.GetRuntimeDir();
+        string exactPortableDir = Path.Combine(runtimeDir, $"java-{requiredJavaMajor}");
+        if (Directory.Exists(exactPortableDir))
+        {
+            var exactFiles = Directory.GetFiles(exactPortableDir, "java.exe", SearchOption.AllDirectories);
+            if (exactFiles.Length > 0)
+                return exactFiles[0];
+        }
+
+        // Check any portable java in game_data/runtime
         if (Directory.Exists(runtimeDir))
         {
-            var candidateFiles = Directory.GetFiles(runtimeDir, "java.exe", SearchOption.AllDirectories)
-                .Concat(Directory.GetFiles(runtimeDir, "javaw.exe", SearchOption.AllDirectories))
-                .ToList();
-
-            // Prefer matching major version folder name if available
-            var bestMatch = candidateFiles.FirstOrDefault(p =>
-                p.Contains($"{requiredJavaMajor}", StringComparison.OrdinalIgnoreCase) &&
-                p.EndsWith("java.exe", StringComparison.OrdinalIgnoreCase));
-
-            if (bestMatch != null)
-                return bestMatch;
-
-            var anyPortable = candidateFiles.FirstOrDefault(p => p.EndsWith("java.exe", StringComparison.OrdinalIgnoreCase))
-                              ?? candidateFiles.FirstOrDefault();
-            if (anyPortable != null)
-                return anyPortable;
-        }
-
-        // 3. Check local Minecraft / TLauncher / System runtimes as fallback
-        string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        string progFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-
-        string[] searchRoots =
-        [
-            Path.Combine(appData, ".minecraft", "runtime"),
-            Path.Combine(appData, ".tlauncher", "jvms"),
-            Path.Combine(appData, ".tlauncher", "legacy", "Minecraft", "jre"),
-            Path.Combine(localAppData, "Packages", "Microsoft.4297127D64EC6_8wekyb3d8bbwe", "LocalCache", "Local", "runtime"),
-            Path.Combine(progFiles, "Java"),
-            Path.Combine(progFiles, "Eclipse Adoptium"),
-            Path.Combine(progFiles, "Microsoft")
-        ];
-
-        foreach (string root in searchRoots)
-        {
-            if (!Directory.Exists(root)) continue;
-            try
-            {
-                var found = Directory.GetFiles(root, "java.exe", SearchOption.AllDirectories);
-                var match = found.FirstOrDefault(f => f.Contains($"{requiredJavaMajor}")) ?? found.FirstOrDefault();
-                if (match != null)
-                    return match;
-            }
-            catch
-            {
-                // Ignore permission errors
-            }
-        }
-
-        // 4. Check JAVA_HOME or PATH
-        string? javaHome = Environment.GetEnvironmentVariable("JAVA_HOME");
-        if (!string.IsNullOrWhiteSpace(javaHome))
-        {
-            string exe = Path.Combine(javaHome, "bin", "java.exe");
-            if (File.Exists(exe)) return exe;
+            var candidateFiles = Directory.GetFiles(runtimeDir, "java.exe", SearchOption.AllDirectories);
+            if (candidateFiles.Length > 0)
+                return candidateFiles[0];
         }
 
         return null;
@@ -209,10 +165,9 @@ public static class JavaLaunchEngine
                 }
             }
 
-            // Okul PC dostu yüksek FPS ayarları (sadece ilk kez veya FPS artırma açıkken optimize eder)
             SetOption(existingLines, "enableVsync", "false");
             SetOption(existingLines, "maxFps", "260");
-            SetOption(existingLines, "graphicsMode", "0"); // Fast graphics
+            SetOption(existingLines, "graphicsMode", "0");
             SetOption(existingLines, "renderClouds", "\"off\"");
             SetOption(existingLines, "entityShadows", "false");
             SetOption(existingLines, "biomeBlendRadius", "0");
@@ -244,6 +199,93 @@ public static class JavaLaunchEngine
         lines.Add($"{key}:{value}");
     }
 
+    private static async Task EnsureMissingLibrariesDownloadedAsync(JsonElement rootElem, string librariesDir, Action<string> log)
+    {
+        if (!rootElem.TryGetProperty("libraries", out var libsElem) || libsElem.ValueKind != JsonValueKind.Array)
+            return;
+
+        using var http = new System.Net.Http.HttpClient { Timeout = TimeSpan.FromMinutes(5) };
+
+        foreach (var lib in libsElem.EnumerateArray())
+        {
+            if (!IsLibraryAllowedOnWindows(lib))
+                continue;
+
+            // 1. Standard artifact
+            string? relPath = null;
+            string? dlUrl = null;
+
+            if (lib.TryGetProperty("downloads", out var dlElem) &&
+                dlElem.TryGetProperty("artifact", out var artElem))
+            {
+                if (artElem.TryGetProperty("path", out var pElem)) relPath = pElem.GetString();
+                if (artElem.TryGetProperty("url", out var uElem)) dlUrl = uElem.GetString();
+            }
+
+            if (string.IsNullOrWhiteSpace(relPath) && lib.TryGetProperty("name", out var nameElem))
+            {
+                relPath = MavenNameToRelativePath(nameElem.GetString() ?? "");
+                string baseUrl = lib.TryGetProperty("url", out var baseElem)
+                    ? (baseElem.GetString() ?? "https://maven.fabricmc.net/")
+                    : "https://libraries.minecraft.net/";
+                if (relPath != null)
+                    dlUrl = baseUrl.TrimEnd('/') + "/" + relPath;
+            }
+
+            if (!string.IsNullOrWhiteSpace(relPath) && !string.IsNullOrWhiteSpace(dlUrl))
+            {
+                string fullDest = Path.Combine(librariesDir, relPath.Replace('/', Path.DirectorySeparatorChar));
+                if (!File.Exists(fullDest))
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(Path.GetDirectoryName(fullDest)!);
+                        log($"[Kütüphane Tamamlayıcı] Eksik dosya indiriliyor: {Path.GetFileName(fullDest)}");
+                        using var resp = await http.GetAsync(dlUrl);
+                        resp.EnsureSuccessStatusCode();
+                        await using var fs = new FileStream(fullDest, FileMode.Create, FileAccess.Write, FileShare.None);
+                        await resp.Content.CopyToAsync(fs);
+                    }
+                    catch (Exception ex)
+                    {
+                        log($"[Kütüphane Uyarı] {Path.GetFileName(fullDest)}: {ex.Message}");
+                    }
+                }
+            }
+
+            // 2. Classifiers (natives-windows)
+            if (lib.TryGetProperty("downloads", out var dl2) &&
+                dl2.TryGetProperty("classifiers", out var classElem))
+            {
+                string[] winKeys = ["natives-windows", "natives-windows-64", "natives-windows-x86_64"];
+                foreach (string k in winKeys)
+                {
+                    if (classElem.TryGetProperty(k, out var natElem))
+                    {
+                        string? natPath = natElem.TryGetProperty("path", out var np) ? np.GetString() : null;
+                        string? natUrl = natElem.TryGetProperty("url", out var nu) ? nu.GetString() : null;
+                        if (!string.IsNullOrWhiteSpace(natPath) && !string.IsNullOrWhiteSpace(natUrl))
+                        {
+                            string fullNat = Path.Combine(librariesDir, natPath.Replace('/', Path.DirectorySeparatorChar));
+                            if (!File.Exists(fullNat))
+                            {
+                                try
+                                {
+                                    Directory.CreateDirectory(Path.GetDirectoryName(fullNat)!);
+                                    using var resp = await http.GetAsync(natUrl);
+                                    resp.EnsureSuccessStatusCode();
+                                    await using var fs = new FileStream(fullNat, FileMode.Create, FileAccess.Write, FileShare.None);
+                                    await resp.Content.CopyToAsync(fs);
+                                }
+                                catch { }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public static async Task<Process?> LaunchJavaEditionAsync(
         LauncherConfig config,
         string versionId,
@@ -259,10 +301,9 @@ public static class JavaLaunchEngine
         if (!File.Exists(jsonPath))
         {
             throw new FileNotFoundException(
-                $"Seçilen sürüm dosyası bulunamadı: {jsonPath}\nLütfen 'GitHub & Paketleyici' sekmesinden sürüm paketini indirin veya içe aktarın.");
+                $"Seçilen sürüm dosyası bulunamadı: {jsonPath}\nLütfen '☁️ GITHUB & KURULUM' sekmesinden sürüm paketini indirin.");
         }
 
-        // Apply offline skin and FPS options before starting
         OfflineSkinService.ApplyOfflineSkinToJava(config, log);
         if (config.AutoApplyFpsOptions)
             ApplyFpsBoosterToOptionsTxt(mcDir, log);
@@ -297,12 +338,17 @@ public static class JavaLaunchEngine
             string? javaExe = FindJavaExecutable(config, javaMajor, log);
             if (string.IsNullOrWhiteSpace(javaExe) || !File.Exists(javaExe))
             {
-                throw new FileNotFoundException(
-                    $"Java {javaMajor} çalışma zamanı (javaw.exe / java.exe) bulunamadı!\n" +
-                    "Okul bilgisayarlarında Java kurulu değilse 'game_data/runtime' klasörüne Portable Java ekleyin veya GitHub paketinden indirin.");
+                log($"[Portable Java] 'game_data/runtime/java-{javaMajor}' bulunamadı, kendi Portable Java {javaMajor} çalışma zamanımız indiriliyor...");
+                await GitHubReleaseService.DownloadPortableJavaJreAsync(javaMajor, config, (_, _) => { }, log);
+                javaExe = FindJavaExecutable(config, javaMajor, log);
             }
 
-            log($"[Motor] Kullanılan Java: {javaExe}");
+            if (string.IsNullOrWhiteSpace(javaExe) || !File.Exists(javaExe))
+            {
+                throw new FileNotFoundException($"Portable Java {javaMajor} ('game_data/runtime/java-{javaMajor}') bulunamadı!");
+            }
+
+            log($"[Motor] Kullanılan Portable Java: {javaExe}");
 
             // Determine mainClass
             string mainClass = "net.minecraft.client.main.Main";
@@ -330,6 +376,11 @@ public static class JavaLaunchEngine
             string sysMcDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".minecraft");
             string sysLibrariesDir = Path.Combine(sysMcDir, "libraries");
 
+            // Ensure all required libraries exist locally
+            await EnsureMissingLibrariesDownloadedAsync(childRoot, librariesDir, log);
+            if (parentRoot.HasValue)
+                await EnsureMissingLibrariesDownloadedAsync(parentRoot.Value, librariesDir, log);
+
             var classPathList = new List<string>();
             var addedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var addedGroupArtifacts = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -353,7 +404,6 @@ public static class JavaLaunchEngine
                             groupArtifactKey = gp.Length >= 4 ? $"{gp[0]}:{gp[1]}:{gp[3]}" : $"{gp[0]}:{gp[1]}";
                     }
 
-                    // Standard artifact path or Maven name conversion
                     string? relPath = null;
                     if (lib.TryGetProperty("downloads", out var dlElem) &&
                         dlElem.TryGetProperty("artifact", out var artElem) &&
@@ -388,7 +438,6 @@ public static class JavaLaunchEngine
                         }
                     }
 
-                    // Check for native classifiers (LWJGL DLLs)
                     ExtractNativesIfPresent(lib, librariesDir, nativesDir, log);
                     if (Directory.Exists(sysLibrariesDir))
                         ExtractNativesIfPresent(lib, sysLibrariesDir, nativesDir, log);
@@ -399,7 +448,6 @@ public static class JavaLaunchEngine
             if (parentRoot.HasValue)
                 ProcessLibrariesFromRoot(parentRoot.Value);
 
-            // Add client jar to classpath
             string clientJar = Path.Combine(versionDir, $"{versionId}.jar");
             if (!File.Exists(clientJar) && !string.IsNullOrWhiteSpace(inheritsFrom))
                 clientJar = Path.Combine(versionsDir, inheritsFrom, $"{inheritsFrom}.jar");
@@ -412,15 +460,12 @@ public static class JavaLaunchEngine
             classPathList.Add(clientJar);
             string classPathString = string.Join(Path.PathSeparator, classPathList);
 
-            // Offline Auth details
             string cleanUsername = OfflineAuthService.SanitizeUsername(config.Username);
             string offlineUuid = OfflineAuthService.GenerateOfflineUuid(cleanUsername, dashed: true);
             log($"[Offline Auth] Kullanıcı: {cleanUsername} | Cracked UUID: {offlineUuid}");
 
-            // Build JVM + Game arguments
             var allArgs = new List<string>();
 
-            // Memory & Optimization flags
             allArgs.Add($"-Xms{Math.Min(config.MinRamMb, config.AllocatedRamMb)}M");
             allArgs.Add($"-Xmx{config.AllocatedRamMb}M");
 
@@ -431,7 +476,6 @@ public static class JavaLaunchEngine
                     allArgs.Add(token);
             }
 
-            // Full Offline Isolation (blocks Mojang auth checks from hanging on restricted school networks)
             if (config.FullOfflineIsolation)
             {
                 allArgs.Add("-Dminecraft.api.env=custom");
@@ -443,7 +487,7 @@ public static class JavaLaunchEngine
 
             if (mainClass.Contains("fabricmc", StringComparison.OrdinalIgnoreCase))
             {
-                allArgs.Add("-DFabricMcEmu= net.minecraft.client.main.Main ");
+                allArgs.Add("-DFabricMcEmu=net.minecraft.client.main.Main");
             }
 
             allArgs.Add($"-Djava.library.path={nativesDir}");

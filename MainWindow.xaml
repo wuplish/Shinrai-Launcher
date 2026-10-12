@@ -55,21 +55,21 @@
                     </StackPanel>
 
                     <!-- Center: Lunar Top Navigation Pills -->
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <RadioButton x:Name="NavPlayBtn" Content="🏠  HOME" Style="{StaticResource LunarTopNavButton}" IsChecked="True" Checked="NavButton_Checked"/>
-                        <RadioButton x:Name="NavFpsBtn" Content="⚡  MODS &amp; FPS" Style="{StaticResource LunarTopNavButton}" Checked="NavButton_Checked"/>
-                        <RadioButton x:Name="NavSkinBtn" Content="👕  SKINS &amp; CAPES" Style="{StaticResource LunarTopNavButton}" Checked="NavButton_Checked"/>
-                        <RadioButton x:Name="NavLanBtn" Content="🌐  SCHOOL LAN" Style="{StaticResource LunarTopNavButton}" Checked="NavButton_Checked"/>
-                        <RadioButton x:Name="NavGithubBtn" Content="☁️  GITHUB &amp; KURULUM" Style="{StaticResource LunarTopNavButton}" Checked="NavButton_Checked"/>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="18,0">
+                        <RadioButton x:Name="NavPlayBtn" Content="🏠 HOME" Style="{StaticResource LunarTopNavButton}" IsChecked="True" Checked="NavButton_Checked"/>
+                        <RadioButton x:Name="NavFpsBtn" Content="⚡ MODS &amp; FPS" Style="{StaticResource LunarTopNavButton}" Checked="NavButton_Checked"/>
+                        <RadioButton x:Name="NavSkinBtn" Content="👕 SKINS" Style="{StaticResource LunarTopNavButton}" Checked="NavButton_Checked"/>
+                        <RadioButton x:Name="NavLanBtn" Content="🌐 SCHOOL LAN" Style="{StaticResource LunarTopNavButton}" Checked="NavButton_Checked"/>
+                        <RadioButton x:Name="NavGithubBtn" Content="☁️ GITHUB &amp; KURULUM" Style="{StaticResource LunarTopNavButton}" Checked="NavButton_Checked"/>
                     </StackPanel>
 
                     <!-- Right: Offline Player Pill + Window Controls -->
                     <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                        <Border Background="#141824" BorderBrush="#262E45" BorderThickness="1" CornerRadius="8" Padding="10,4" Margin="0,0,12,0">
+                        <Border Background="#141824" BorderBrush="#262E45" BorderThickness="1" CornerRadius="8" Padding="10,4" Margin="0,0,10,0">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Ellipse Width="8" Height="8" Fill="#10B981" Margin="0,0,8,0"/>
-                                <TextBlock Text="USER:" FontSize="10" FontWeight="Bold" Foreground="#64748B" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                <TextBox x:Name="UsernameTextBox" Width="105" Background="Transparent" Foreground="White" FontWeight="Bold" FontSize="12.5"
+                                <Ellipse Width="8" Height="8" Fill="#10B981" Margin="0,0,6,0"/>
+                                <TextBlock Text="USER:" FontSize="10" FontWeight="Bold" Foreground="#64748B" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                <TextBox x:Name="UsernameTextBox" Width="90" Background="Transparent" Foreground="White" FontWeight="Bold" FontSize="12"
                                          BorderThickness="0" CaretBrush="#10B981" MaxLength="16" TextChanged="UsernameTextBox_TextChanged"/>
                             </StackPanel>
                         </Border>
@@ -89,7 +89,7 @@
                 <ScrollViewer x:Name="ViewPlay" VerticalScrollBarVisibility="Auto">
                     <StackPanel>
                         <!-- Lunar Central Cosmic Launch Banner -->
-                        <Border CornerRadius="16" Padding="34,30" Margin="0,0,0,18" BorderBrush="#28324E" BorderThickness="1">
+                        <Border CornerRadius="16" Padding="30,26" Margin="0,0,0,18" BorderBrush="#28324E" BorderThickness="1">
                             <Border.Background>
                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                     <GradientStop Color="#11172B" Offset="0.0"/>
@@ -100,8 +100,8 @@
 
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1.25*"/>
-                                    <ColumnDefinition Width="24"/>
+                                    <ColumnDefinition Width="1.35*"/>
+                                    <ColumnDefinition Width="22"/>
                                     <ColumnDefinition Width="1*"/>
                                 </Grid.ColumnDefinitions>
 
@@ -118,11 +118,11 @@
 
                                     <TextBlock Text="SHINRAI CLIENT" FontSize="34" FontWeight="Black" Foreground="White" Margin="0,0,0,4"/>
                                     <TextBlock Text="Okul bilgisayarları için sıfır dış bağlantılı 1.21.11 (Sodium/Fabric/Vanilla), 1.12.2 (1.12.12 PvP) ve Bedrock başlatıcısı."
-                                               FontSize="13.5" Foreground="#94A3B8" TextWrapping="Wrap" Margin="0,0,0,20"/>
+                                               FontSize="13.5" Foreground="#94A3B8" TextWrapping="Wrap" Margin="0,0,0,18"/>
 
                                     <!-- Quick Version Preset Pills (1.21.11 & 1.12.2 / 1.12.12 & Bedrock) -->
                                     <TextBlock Text="HIZLI PROFİL SEÇİMİ:" FontSize="10.5" FontWeight="Bold" Foreground="#64748B" Margin="0,0,0,8"/>
-                                    <WrapPanel Margin="0,0,0,18">
+                                    <WrapPanel Margin="0,0,0,16">
                                         <Button Content="🚀 1.21.11 (Sodium + FPS++)" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8" Click="QuickSelect12111Sodium_Click"/>
                                         <Button Content="☕ 1.21.11 (Vanilla / OptiFine)" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8" Click="QuickSelect12111Vanilla_Click"/>
                                         <Button Content="⚔️ 1.12.2 / 1.12.12 (PvP FPS)" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8" Click="QuickSelect1122_Click"/>
@@ -131,17 +131,17 @@
                                     </WrapPanel>
 
                                     <!-- BIG LUNAR LAUNCH BUTTON -->
-                                    <Grid HorizontalAlignment="Left">
+                                    <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="330"/>
-                                            <ColumnDefinition Width="12"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
                                         <Button Grid.Column="0" x:Name="LaunchGameBtn" Content="▶  LAUNCH 1.21.11" Style="{StaticResource PrimaryButton}"
-                                                Height="62" FontSize="19" FontWeight="Black" Click="LaunchGameBtn_Click"/>
-                                        <Button Grid.Column="2" Content="⚡ 1.21.11 + Sodium &amp; 1.12.2 Otomatik Kur" Style="{StaticResource SecondaryButton}"
-                                                Height="62" Padding="18,0" FontWeight="Bold" Foreground="#38BDF8" BorderBrush="#0284C7"
-                                                ToolTip="1.21.11, Fabric, Sodium, Lithium, FerriteCore ve 1.12.2 sürümlerini tek tıkla local klasöre indirir ve ayarlar"
+                                                Height="58" FontSize="17.5" FontWeight="Black" Click="LaunchGameBtn_Click"/>
+                                        <Button Grid.Column="2" Content="⚡ Sürümleri &amp; Java'yı Onar" Style="{StaticResource SecondaryButton}"
+                                                Height="58" Padding="14,0" FontWeight="Bold" Foreground="#38BDF8" BorderBrush="#0284C7"
+                                                ToolTip="1.21.11, Fabric, Sodium, Lithium, FerriteCore, Portable Java ve 1.12.2 sürümlerini tek tıkla local klasöre indirir ve onarır"
                                                 Click="AutoSetupTargetVersionsBtn_Click"/>
                                     </Grid>
                                 </StackPanel>

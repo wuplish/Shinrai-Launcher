@@ -42,9 +42,23 @@ public class LauncherConfig
     // LAN Preferences
     public string LastDirectConnectIp { get; set; } = "192.168.1.10:25565";
 
-    private static string ConfigFilePath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "shinrai_config.json");
+    private static string ConfigFilePath => Path.Combine(GetPortableRootDir(), "shinrai_config.json");
 
-    public static string GetPortableRootDir() => AppDomain.CurrentDomain.BaseDirectory;
+    public static string GetPortableRootDir()
+    {
+        string baseDir = AppDomain.CurrentDomain.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        string dirName = Path.GetFileName(baseDir);
+
+        // If launched from Portable_Build/ or bin/, use the main folder above it if game_data exists there
+        if (dirName.Equals("Portable_Build", StringComparison.OrdinalIgnoreCase))
+        {
+            string? parent = Directory.GetParent(baseDir)?.FullName;
+            if (!string.IsNullOrEmpty(parent) && Directory.Exists(Path.Combine(parent, "game_data")))
+                return parent;
+        }
+
+        return AppDomain.CurrentDomain.BaseDirectory;
+    }
 
     public string GetMinecraftDir()
     {
