@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>ShinraiLauncher</AssemblyName>
+    <RootNamespace>ShinraiLauncher</RootNamespace>
+    <ApplicationTitle>Shinrai Minecraft Launcher</ApplicationTitle>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+</Project>

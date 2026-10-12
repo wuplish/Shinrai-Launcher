@@ -1,0 +1,12 @@
+# Build intermediates
+bin/
+obj/
+Portable_Build/
+*.pdb
+
+# Runtime logs & saves
+game_data/.minecraft/logs/
+game_data/.minecraft/crash-reports/
+game_data/.minecraft/saves/
+Release_Output/
+*.zip

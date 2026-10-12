@@ -1,0 +1,627 @@
+<Window x:Class="ShinraiLauncher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Shinrai Client — Lunar Edition (1.21.11 &amp; 1.12.2)"
+        Width="1150" Height="750"
+        MinWidth="980" MinHeight="660"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="CanResizeWithGrip"
+        Background="Transparent"
+        Foreground="{StaticResource TextPrimaryBrush}"
+        FontFamily="Segoe UI">
+
+    <!-- Outer Rounded Borderless Lunar Frame -->
+    <Border Background="{StaticResource BgDeepBrush}" BorderBrush="#23293E" BorderThickness="1.5" CornerRadius="14">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="62"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="48"/>
+            </Grid.RowDefinitions>
+
+            <!-- ==================== LUNAR TOP NAVIGATION BAR ==================== -->
+            <Border Grid.Row="0" Background="{StaticResource BgPanelBrush}" BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="0,0,0,1" CornerRadius="14,14,0,0"
+                    MouseLeftButtonDown="TopBar_MouseLeftButtonDown">
+                <Grid Margin="20,0,14,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left: Lunar Moon Logo + Brand -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border Width="36" Height="36" CornerRadius="10" Margin="0,0,12,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#10B981" Offset="0.0"/>
+                                    <GradientStop Color="#6366F1" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <TextBlock Text="🌙" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="SHINRAI" FontSize="17" FontWeight="Black" Foreground="White"/>
+                                <Border Background="#152C28" BorderBrush="#10B981" BorderThickness="1" CornerRadius="4" Padding="6,1" Margin="8,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Text="LUNAR" FontSize="9.5" FontWeight="ExtraBold" Foreground="#34D399"/>
+                                </Border>
+                            </StackPanel>
+                            <TextBlock Text="OFFLINE • SODIUM • OPTIFINE" FontSize="9.5" FontWeight="SemiBold" Foreground="#64748B"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Center: Lunar Top Navigation Pills -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <RadioButton x:Name="NavPlayBtn" Content="🏠  HOME" Style="{StaticResource LunarTopNavButton}" IsChecked="True" Checked="NavButton_Checked"/>
+                        <RadioButton x:Name="NavFpsBtn" Content="⚡  MODS &amp; FPS" Style="{StaticResource LunarTopNavButton}" Checked="NavButton_Checked"/>
+                        <RadioButton x:Name="NavSkinBtn" Content="👕  SKINS &amp; CAPES" Style="{StaticResource LunarTopNavButton}" Checked="NavButton_Checked"/>
+                        <RadioButton x:Name="NavLanBtn" Content="🌐  SCHOOL LAN" Style="{StaticResource LunarTopNavButton}" Checked="NavButton_Checked"/>
+                        <RadioButton x:Name="NavGithubBtn" Content="☁️  GITHUB &amp; KURULUM" Style="{StaticResource LunarTopNavButton}" Checked="NavButton_Checked"/>
+                    </StackPanel>
+
+                    <!-- Right: Offline Player Pill + Window Controls -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border Background="#141824" BorderBrush="#262E45" BorderThickness="1" CornerRadius="8" Padding="10,4" Margin="0,0,12,0">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse Width="8" Height="8" Fill="#10B981" Margin="0,0,8,0"/>
+                                <TextBlock Text="USER:" FontSize="10" FontWeight="Bold" Foreground="#64748B" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                <TextBox x:Name="UsernameTextBox" Width="105" Background="Transparent" Foreground="White" FontWeight="Bold" FontSize="12.5"
+                                         BorderThickness="0" CaretBrush="#10B981" MaxLength="16" TextChanged="UsernameTextBox_TextChanged"/>
+                            </StackPanel>
+                        </Border>
+                        <TextBlock x:Name="UuidPreviewText" Visibility="Collapsed"/>
+
+                        <Button Content="—" Style="{StaticResource WinCtrlButton}" Click="MinimizeWindow_Click" ToolTip="Küçült"/>
+                        <Button Content="▢" Style="{StaticResource WinCtrlButton}" Click="MaximizeWindow_Click" ToolTip="Tam Ekran"/>
+                        <Button Content="✕" Style="{StaticResource WinCtrlButton}" Click="CloseWindow_Click" ToolTip="Kapat"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ==================== MAIN CONTENT AREA ==================== -->
+            <Grid Grid.Row="1" Margin="26,20,26,14">
+
+                <!-- ==================== VIEW 1: LUNAR HOME (PLAY) ==================== -->
+                <ScrollViewer x:Name="ViewPlay" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <!-- Lunar Central Cosmic Launch Banner -->
+                        <Border CornerRadius="16" Padding="34,30" Margin="0,0,0,18" BorderBrush="#28324E" BorderThickness="1">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#11172B" Offset="0.0"/>
+                                    <GradientStop Color="#0E1E28" Offset="0.55"/>
+                                    <GradientStop Color="#141229" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1.25*"/>
+                                    <ColumnDefinition Width="24"/>
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Left Hero & Big Lunar Launch Button -->
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                        <Border Background="#132F28" BorderBrush="#10B981" BorderThickness="1" CornerRadius="6" Padding="10,4" Margin="0,0,8,0">
+                                            <TextBlock Text="● %100 LOCAL &amp; OFFLINE READY" FontSize="10.5" FontWeight="Bold" Foreground="#34D399"/>
+                                        </Border>
+                                        <Border Background="#1E1B36" BorderBrush="#6366F1" BorderThickness="1" CornerRadius="6" Padding="10,4">
+                                            <TextBlock Text="⚡ SODIUM + LITHIUM + OPTIFINE" FontSize="10.5" FontWeight="Bold" Foreground="#A5B4FC"/>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <TextBlock Text="SHINRAI CLIENT" FontSize="34" FontWeight="Black" Foreground="White" Margin="0,0,0,4"/>
+                                    <TextBlock Text="Okul bilgisayarları için sıfır dış bağlantılı 1.21.11 (Sodium/Fabric/Vanilla), 1.12.2 (1.12.12 PvP) ve Bedrock başlatıcısı."
+                                               FontSize="13.5" Foreground="#94A3B8" TextWrapping="Wrap" Margin="0,0,0,20"/>
+
+                                    <!-- Quick Version Preset Pills (1.21.11 & 1.12.2 / 1.12.12 & Bedrock) -->
+                                    <TextBlock Text="HIZLI PROFİL SEÇİMİ:" FontSize="10.5" FontWeight="Bold" Foreground="#64748B" Margin="0,0,0,8"/>
+                                    <WrapPanel Margin="0,0,0,18">
+                                        <Button Content="🚀 1.21.11 (Sodium + FPS++)" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8" Click="QuickSelect12111Sodium_Click"/>
+                                        <Button Content="☕ 1.21.11 (Vanilla / OptiFine)" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8" Click="QuickSelect12111Vanilla_Click"/>
+                                        <Button Content="⚔️ 1.12.2 / 1.12.12 (PvP FPS)" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8" Click="QuickSelect1122_Click"/>
+                                        <Button x:Name="SelectBedrockEditionBtn" Content="🪨 Bedrock Edition" Style="{StaticResource SecondaryButton}" Margin="0,0,8,8" Click="SelectBedrockEditionBtn_Click"/>
+                                        <Button x:Name="SelectJavaEditionBtn" Visibility="Collapsed" Click="SelectJavaEditionBtn_Click"/>
+                                    </WrapPanel>
+
+                                    <!-- BIG LUNAR LAUNCH BUTTON -->
+                                    <Grid HorizontalAlignment="Left">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="330"/>
+                                            <ColumnDefinition Width="12"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Button Grid.Column="0" x:Name="LaunchGameBtn" Content="▶  LAUNCH 1.21.11" Style="{StaticResource PrimaryButton}"
+                                                Height="62" FontSize="19" FontWeight="Black" Click="LaunchGameBtn_Click"/>
+                                        <Button Grid.Column="2" Content="⚡ 1.21.11 + Sodium &amp; 1.12.2 Otomatik Kur" Style="{StaticResource SecondaryButton}"
+                                                Height="62" Padding="18,0" FontWeight="Bold" Foreground="#38BDF8" BorderBrush="#0284C7"
+                                                ToolTip="1.21.11, Fabric, Sodium, Lithium, FerriteCore ve 1.12.2 sürümlerini tek tıkla local klasöre indirir ve ayarlar"
+                                                Click="AutoSetupTargetVersionsBtn_Click"/>
+                                    </Grid>
+                                </StackPanel>
+
+                                <!-- Right Version Selector & Telemetry Card -->
+                                <Border Grid.Column="2" Background="#0D101A" BorderBrush="#23293E" BorderThickness="1" CornerRadius="14" Padding="20" VerticalAlignment="Center">
+                                    <StackPanel>
+                                        <!-- Java Card -->
+                                        <StackPanel x:Name="JavaEditionCard">
+                                            <DockPanel Margin="0,0,0,10">
+                                                <TextBlock Text="AKTİF PROFIL &amp; SÜRÜM" FontSize="11" FontWeight="Bold" Foreground="#10B981" VerticalAlignment="Center"/>
+                                                <Button Content="🔄 Yenile" Style="{StaticResource SecondaryButton}" Padding="10,4" FontSize="11" HorizontalAlignment="Right" Click="RefreshVersionsBtn_Click"/>
+                                            </DockPanel>
+
+                                            <ComboBox x:Name="JavaVersionComboBox" Height="38" FontSize="13" FontWeight="Bold" SelectionChanged="JavaVersionComboBox_SelectionChanged" Margin="0,0,0,10"/>
+                                            <TextBlock x:Name="VersionStatusHintText" Text="" FontSize="11.5" Foreground="#34D399" TextWrapping="Wrap" Margin="0,0,0,10"/>
+
+                                            <Border Background="#131826" CornerRadius="8" Padding="12" Margin="0,0,0,8">
+                                                <StackPanel>
+                                                    <TextBlock x:Name="JavaRuntimeStatusText" Text="Java Runtime: Kontrol ediliyor..." FontSize="12" FontWeight="SemiBold" Foreground="#38BDF8" TextWrapping="Wrap"/>
+                                                    <TextBlock x:Name="ActiveRamStatusText" Text="Ayrılan Bellek: 4096 MB (Aikar's G1GC)" FontSize="11.5" Foreground="#94A3B8" Margin="0,4,0,0"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+
+                                        <!-- Bedrock Card -->
+                                        <StackPanel x:Name="BedrockEditionCard" Visibility="Collapsed">
+                                            <DockPanel Margin="0,0,0,8">
+                                                <TextBlock Text="🪨 BEDROCK EDITION (LOCAL / SİSTEM)" FontSize="12" FontWeight="Bold" Foreground="#38BDF8" VerticalAlignment="Center"/>
+                                                <Button Content="☕ Java'ya Dön" Style="{StaticResource SecondaryButton}" Padding="8,3" FontSize="11" HorizontalAlignment="Right" Click="SelectJavaEditionBtn_Click"/>
+                                            </DockPanel>
+                                            <TextBlock x:Name="BedrockStatusText" Text="Kontrol ediliyor..." FontSize="12" Foreground="#10B981" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button Content="📂 Portable Bedrock Exe Seç..." Style="{StaticResource SecondaryButton}" Margin="0,0,8,0" Click="BrowseBedrockExeBtn_Click"/>
+                                                <Button Content="📥 Kuruluysa Klasöre Kopyala" Style="{StaticResource SecondaryButton}" Click="GoToGitHubTab_Click"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </Border>
+
+                        <!-- Bottom 3 Lunar Status Cards -->
+                        <UniformGrid Columns="3">
+                            <Border Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Padding="18" Margin="0,0,8,0">
+                                <StackPanel>
+                                    <TextBlock Text="🚀 LUNAR FPS BOOST ENGINE" FontSize="11" FontWeight="Bold" Foreground="#10B981"/>
+                                    <TextBlock Text="Sodium + Lithium + OptiFine Fast" FontSize="14" FontWeight="Bold" Foreground="White" Margin="0,5,0,4"/>
+                                    <TextBlock Text="Fullbright (Gamma 10x), No Fog, EntityCulling, FerriteCore ve 260 FPS kilit açıcı otomatik uygulanır." FontSize="11.5" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Padding="18" Margin="4,0,4,0">
+                                <StackPanel>
+                                    <TextBlock Text="👕 OFFLINE SKIN &amp; CAPE" FontSize="11" FontWeight="Bold" Foreground="#A855F7"/>
+                                    <TextBlock x:Name="CardSkinSummaryText" Text="Shinrai_Shadow_Ninja.png" FontSize="14" FontWeight="Bold" Foreground="White" Margin="0,5,0,4" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="İnternet olmadan hem 1.21.11 hem 1.12.2 içinde kendi skin ve pelerininiz görünür." FontSize="11.5" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Padding="18" Margin="8,0,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="🌐 SINIF / OKUL LAN AĞI" FontSize="11" FontWeight="Bold" Foreground="#38BDF8"/>
+                                    <TextBlock x:Name="CardLocalIpText" Text="192.168.x.x" FontSize="14" FontWeight="Bold" Foreground="White" Margin="0,5,0,4" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="Okul switch'lerinde Multicast engelli olsa bile yerel LAN Relay ile arkadaşlarınla oyna." FontSize="11.5" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+                        </UniformGrid>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- ==================== VIEW 2: LUNAR MOD MENU & FPS SETTINGS ==================== -->
+                <ScrollViewer x:Name="ViewFps" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <DockPanel Margin="0,0,0,14">
+                            <StackPanel>
+                                <TextBlock Text="⚡ LUNAR CLIENT MOD MENU &amp; FPS OPTIMIZER" FontSize="18" FontWeight="Black" Foreground="White"/>
+                                <TextBlock Text="Modları tek tıkla ENABLED / DISABLED yapın; ayarlar otomatik olarak Sodium, OptiFine ve Vanilla profillerine işlenir." FontSize="12.5" Foreground="{StaticResource TextSecondaryBrush}"/>
+                            </StackPanel>
+                            <Button Content="✨ Tüm FPS Ayarlarını Şimdi Uygula" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Right" Click="ApplyFpsOptionsNow_Click"/>
+                        </DockPanel>
+
+                        <!-- Lunar 3-Column Mod Toggle Grid -->
+                        <ItemsControl x:Name="LunarModsItemsControl" Margin="0,0,0,18">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="3"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Padding="16" Margin="5">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,6">
+                                                <TextBlock Text="{Binding Icon}" FontSize="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                            <TextBlock Grid.Row="1" Text="{Binding Subtitle}" FontSize="11.5" Foreground="#94A3B8" TextWrapping="Wrap" Margin="0,0,0,12"/>
+                                            <Button Grid.Row="2" Tag="{Binding Id}" Click="LunarModCardToggle_Click" Cursor="Hand" Height="32" BorderThickness="0">
+                                                <Button.Style>
+                                                    <Style TargetType="Button">
+                                                        <Setter Property="Background" Value="#10B981"/>
+                                                        <Setter Property="Foreground" Value="White"/>
+                                                        <Setter Property="Content" Value="ENABLED"/>
+                                                        <Setter Property="FontWeight" Value="Black"/>
+                                                        <Setter Property="FontSize" Value="11.5"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsEnabled}" Value="False">
+                                                                <Setter Property="Background" Value="#252C40"/>
+                                                                <Setter Property="Foreground" Value="#94A3B8"/>
+                                                                <Setter Property="Content" Value="DISABLED"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- RAM & JVM Card -->
+                        <Border Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="🧠 BELLEK (RAM) &amp; JVM MOTOR AYARLARI" FontSize="14" FontWeight="Bold" Foreground="White" Margin="0,0,0,10"/>
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="130"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Slider x:Name="RamSlider" Minimum="1024" Maximum="12288" TickFrequency="512" IsSnapToTickEnabled="True" VerticalAlignment="Center" ValueChanged="RamSlider_ValueChanged"/>
+                                    <Border Grid.Column="1" Background="#0A0C13" BorderBrush="#263147" BorderThickness="1" CornerRadius="6" Padding="10,6" Margin="12,0,0,0">
+                                        <TextBlock x:Name="RamValueLabel" Text="4096 MB" FontSize="14" FontWeight="Bold" Foreground="#10B981" HorizontalAlignment="Center"/>
+                                    </Border>
+                                </Grid>
+
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="12"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox x:Name="JvmPresetComboBox" Height="36" SelectionChanged="JvmPresetComboBox_SelectionChanged">
+                                        <ComboBoxItem Content="🏫 Okul PC / Düşük Sistem Modu (Düşük Takılma, Intel HD Dostu G1GC)"/>
+                                        <ComboBoxItem Content="🚀 Aikar's Flags Yüksek Performans (Lunar Sodium / OptiFine Önerilen)"/>
+                                        <ComboBoxItem Content="⚡ ZGC Ultra Düşük Gecikme (Java 21+ / 1.21.11 İçin)"/>
+                                        <ComboBoxItem Content="🛠️ Özel JVM Argümanları"/>
+                                    </ComboBox>
+                                    <Button Grid.Column="2" Content="☕ Özel Java (javaw.exe) Seç..." Style="{StaticResource SecondaryButton}" Click="BrowseJavaExeBtn_Click"/>
+                                </Grid>
+
+                                <TextBox x:Name="CustomJvmArgsTextBox" Style="{StaticResource DarkTextBox}" TextChanged="CustomJvmArgsTextBox_TextChanged" Margin="0,0,0,10"/>
+
+                                <WrapPanel>
+                                    <CheckBox x:Name="OfflineIsolationCheckBox" Content="Tamamen Offline İzolasyon (Mojang sunucu sorgularını 127.0.0.1'e yönlendir)" Foreground="White" FontSize="12" Margin="0,0,20,4" Checked="FpsCheckBoxes_Changed" Unchecked="FpsCheckBoxes_Changed"/>
+                                    <CheckBox x:Name="AutoFpsOptionsCheckBox" Content="Oyun Başlarken Lunar FPS Ayarlarını Otomatik Uygula" Foreground="White" FontSize="12" Checked="FpsCheckBoxes_Changed" Unchecked="FpsCheckBoxes_Changed"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Local Mods List -->
+                        <Border Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Padding="18">
+                            <StackPanel>
+                                <DockPanel Margin="0,0,0,10">
+                                    <TextBlock Text="🧩 YÜKLÜ .JAR MODLARI ('game_data/.minecraft/mods')" FontSize="13.5" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Content="➕ Mod (.jar) Ekle" Style="{StaticResource PrimaryButton}" Padding="12,6" Margin="0,0,8,0" Click="AddModJarBtn_Click"/>
+                                        <Button Content="📂 Klasörü Aç" Style="{StaticResource SecondaryButton}" Padding="12,6" Click="OpenModsFolderBtn_Click"/>
+                                    </StackPanel>
+                                </DockPanel>
+                                <ListBox x:Name="ModsListBox" Height="130" Background="#0A0C13" BorderBrush="#22273B" Foreground="White">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="4,3">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="130"/>
+                                                    <ColumnDefinition Width="320"/>
+                                                    <ColumnDefinition Width="90"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding CategoryBadge}" Foreground="#10B981" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding FileName}" Foreground="White" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="2" Text="{Binding SizeText}" Foreground="#94A3B8" VerticalAlignment="Center"/>
+                                                <Button Grid.Column="3" Content="Aç / Kapat" Style="{StaticResource SecondaryButton}" Padding="10,3" Tag="{Binding FullPath}" Click="ToggleModItemBtn_Click"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- ==================== VIEW 3: OFFLINE SKIN & CAPE ==================== -->
+                <ScrollViewer x:Name="ViewSkin" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="18"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Padding="18">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="LUNAR SKIN PREVIEW" FontSize="11.5" FontWeight="Bold" Foreground="#10B981" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                                <Border Width="170" Height="270" Background="#0A0C13" BorderBrush="#22273B" BorderThickness="1" CornerRadius="10" Padding="12">
+                                    <Image x:Name="SkinPreviewImage" Stretch="Uniform" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                                </Border>
+                                <CheckBox x:Name="ApplySkinCheckBox" Content="Oyuna Girerken Otomatik Uygula" Foreground="White" FontSize="12" Margin="0,14,0,6" IsChecked="True" Checked="SkinSettings_Changed" Unchecked="SkinSettings_Changed"/>
+                                <CheckBox x:Name="SlimSkinCheckBox" Content="Alex (İnce 3px Kol) Modeli" Foreground="#CBD5E1" FontSize="12" Margin="0,0,0,12" Checked="SkinSettings_Changed" Unchecked="SkinSettings_Changed"/>
+                                <Button Content="✨ Şimdi Oyuna Entegre Et" Style="{StaticResource PrimaryButton}" Width="210" Click="ApplySkinNowBtn_Click"/>
+                            </StackPanel>
+                        </Border>
+
+                        <StackPanel Grid.Column="2">
+                            <Border Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <TextBlock Text="👕 OFFLINE SKIN SEÇİMİ (%100 LOCAL)" FontSize="15" FontWeight="Bold" Foreground="White"/>
+                                    <TextBlock Text="İnternet bağlantısı olmadan hem 1.21.11 hem 1.12.2 içinde kendi skininizi kullanın." FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,3,0,14"/>
+                                    <Grid Margin="0,0,0,12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ComboBox x:Name="PresetSkinsComboBox" Height="36" SelectionChanged="PresetSkinsComboBox_SelectionChanged"/>
+                                        <Button Grid.Column="2" Content="📂 Skin (.png) Yükle..." Style="{StaticResource SecondaryButton}" Click="BrowseSkinFileBtn_Click"/>
+                                    </Grid>
+                                    <TextBlock x:Name="SelectedSkinPathText" Text="Seçili Skin: -" FontSize="11.5" Foreground="#38BDF8" TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Padding="20">
+                                <StackPanel>
+                                    <TextBlock Text="🧣 LUNAR OFFLINE PELERİN (CAPE)" FontSize="15" FontWeight="Bold" Foreground="White"/>
+                                    <TextBlock Text="Yerel pelerin paketine dahil edilecek 64x32 pelerin dosyası." FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,3,0,14"/>
+                                    <Grid Margin="0,0,0,12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ComboBox x:Name="PresetCapesComboBox" Height="36" SelectionChanged="PresetCapesComboBox_SelectionChanged"/>
+                                        <Button Grid.Column="2" Content="📂 Pelerin (.png) Yükle..." Style="{StaticResource SecondaryButton}" Click="BrowseCapeFileBtn_Click"/>
+                                    </Grid>
+                                    <TextBlock x:Name="SelectedCapePathText" Text="Seçili Pelerin: -" FontSize="11.5" Foreground="#10B981" TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+
+                <!-- ==================== VIEW 4: SCHOOL LAN CENTER ==================== -->
+                <ScrollViewer x:Name="ViewLan" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <Border Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,0,16">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="🌐 OKUL AĞI (LOCAL WI-FI / ETHERNET) BERABER OYNAMA MERKEZİ" FontSize="15" FontWeight="Bold" Foreground="White"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                        <TextBlock Text="Senin Yerel Ağ IP Adresin: " FontSize="13" Foreground="#CBD5E1"/>
+                                        <TextBlock x:Name="LanTabIpText" Text="192.168.1.x" FontSize="14" FontWeight="Bold" Foreground="#10B981" Margin="6,0,0,0"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="📋 IP Adresimi Kopyala" Style="{StaticResource SecondaryButton}" VerticalAlignment="Center" Click="CopyLocalIpBtn_Click"/>
+                            </Grid>
+                        </Border>
+
+                        <Border Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,0,16">
+                            <StackPanel>
+                                <DockPanel Margin="0,0,0,12">
+                                    <TextBlock Text="📡 AĞDA BULUNAN AÇIK LAN DÜNYALARI" FontSize="14" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Content="🔄 Yeniden Tara" Style="{StaticResource SecondaryButton}" Margin="0,0,8,0" Click="RefreshLanListBtn_Click"/>
+                                        <Button Content="🎮 Seçili Sunucuya Gir" Style="{StaticResource PrimaryButton}" Click="ConnectSelectedLanBtn_Click"/>
+                                    </StackPanel>
+                                </DockPanel>
+                                <ListBox x:Name="LanServersListBox" Height="140" Background="#0A0C13" BorderBrush="#22273B" Foreground="White">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="6,4">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="85"/>
+                                                    <ColumnDefinition Width="260"/>
+                                                    <ColumnDefinition Width="170"/>
+                                                    <ColumnDefinition Width="110"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding Edition}" Foreground="#38BDF8" FontWeight="Bold"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding Motd}" Foreground="White" FontWeight="SemiBold"/>
+                                                <TextBlock Grid.Column="2" Text="{Binding Endpoint}" Foreground="#10B981" FontWeight="Bold"/>
+                                                <TextBlock Grid.Column="3" Text="{Binding Players}" Foreground="#CBD5E1"/>
+                                                <TextBlock Grid.Column="4" Text="{Binding Version}" Foreground="#94A3B8"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Padding="20">
+                            <StackPanel>
+                                <TextBlock Text="🛡️ OKUL MULTICAST ENGELİ AŞICI (LAN RELAY)" FontSize="14" FontWeight="Bold" Foreground="#10B981" Margin="0,0,0,8"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="240"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="DirectLanIpTextBox" Style="{StaticResource DarkTextBox}" Text="192.168.1.10:25565"/>
+                                    <Button Grid.Column="2" Content="🔍 IP'yi Yokla" Style="{StaticResource SecondaryButton}" Click="ProbeDirectIpBtn_Click"/>
+                                    <Button Grid.Column="4" x:Name="ToggleRelayBtn" Content="📡 Çok Oyunculu Listeme Yansıt (Relay)" Style="{StaticResource SecondaryButton}" Click="ToggleRelayBtn_Click"/>
+                                    <Button Grid.Column="6" Content="🚀 Bu IP'ye Doğrudan Başlat" Style="{StaticResource PrimaryButton}" Click="DirectLaunchToIpBtn_Click"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- ==================== VIEW 5: GITHUB SYNC & AUTO-SETUP ==================== -->
+                <ScrollViewer x:Name="ViewGithub" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <Border Background="{StaticResource BgCardBrush}" BorderBrush="#10B981" BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,0,16">
+                            <DockPanel>
+                                <StackPanel>
+                                    <TextBlock Text="⚡ TEK TIKLA 1.21.11 (SODIUM + FABRIC + VANILLA) &amp; 1.12.2 HAZIRLAYICI" FontSize="15" FontWeight="Black" Foreground="#10B981"/>
+                                    <TextBlock Text="1.21.11, Fabric Loader, Sodium, Lithium, FerriteCore, EntityCulling ve 1.12.2 (1.12.12) sürümlerini tüm yüksek FPS ayarlarıyla otomatik indirip kurar." FontSize="12" Foreground="#CBD5E1" Margin="0,4,0,0"/>
+                                </StackPanel>
+                                <Button Content="🚀 1.21.11 + Sodium &amp; 1.12.2 Şimdi Kur" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Right" VerticalAlignment="Center" Click="AutoSetupTargetVersionsBtn_Click"/>
+                            </DockPanel>
+                        </Border>
+
+                        <!-- SCHOOL SIDE: DOWNLOAD FROM GITHUB RELEASES OR LOCAL ZIP -->
+                        <Border Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="🏫 OKULDA KURULUM: GITHUB RELEASES (wuplish/Shinrai-Launcher)" FontSize="14" FontWeight="Bold" Foreground="White" Margin="0,0,0,10"/>
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="240"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="GitHubRepoTextBox" Style="{StaticResource DarkTextBox}"/>
+                                    <Button Grid.Column="2" Content="🔍 Release Listele" Style="{StaticResource SecondaryButton}" Click="FetchReleaseAssetsBtn_Click"/>
+                                    <ComboBox Grid.Column="4" x:Name="ReleaseAssetsComboBox" Height="36"/>
+                                    <Button Grid.Column="6" Content="⬇️ Paketi İndir &amp; Kur" Style="{StaticResource PrimaryButton}" Click="DownloadSelectedAssetBtn_Click"/>
+                                </Grid>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="DirectZipUrlTextBox" Style="{StaticResource DarkTextBox}"/>
+                                    <Button Grid.Column="2" Content="🌐 Linkten İndir" Style="{StaticResource SecondaryButton}" Click="DownloadDirectUrlBtn_Click"/>
+                                    <Button Grid.Column="4" Content="📂 USB / PC'den .zip Kur..." Style="{StaticResource SecondaryButton}" Click="InstallLocalZipBtn_Click"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- HOME SIDE: PREPARE PORTABLE GAME & CREATE GITHUB RELEASE ZIP -->
+                        <Border Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Padding="20">
+                            <StackPanel>
+                                <TextBlock Text="🏠 EVDE PAKETLEME &amp; PORTABLE JAVA EKLEME" FontSize="14" FontWeight="Bold" Foreground="#38BDF8" Margin="0,0,0,10"/>
+
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox x:Name="SystemVersionsComboBox" Height="36"/>
+                                    <Button Grid.Column="2" Content="🔄 Sistemdekileri Tara" Style="{StaticResource SecondaryButton}" Click="ScanSystemVersionsBtn_Click"/>
+                                    <Button Grid.Column="4" Content="📥 Portable Klasöre Aktar" Style="{StaticResource SecondaryButton}" Click="ImportSystemVersionBtn_Click"/>
+                                </Grid>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="8"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="8"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="8"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox x:Name="VanillaDownloadComboBox" Height="36" SelectedIndex="0">
+                                        <ComboBoxItem Content="1.21.11"/>
+                                        <ComboBoxItem Content="1.12.2"/>
+                                    </ComboBox>
+                                    <Button Grid.Column="2" Content="⬇️ Sürüm İndir" Style="{StaticResource SecondaryButton}" Click="DownloadVanillaAtHomeBtn_Click"/>
+                                    <ComboBox Grid.Column="4" x:Name="PortableJavaMajorComboBox" Width="120" Height="36" SelectedIndex="0">
+                                        <ComboBoxItem Content="Java 21" Tag="21"/>
+                                        <ComboBoxItem Content="Java 8" Tag="8"/>
+                                    </ComboBox>
+                                    <Button Grid.Column="6" Content="☕ Portable Java İndir" Style="{StaticResource SecondaryButton}" Click="DownloadPortableJavaBtn_Click"/>
+                                    <Button Grid.Column="8" Content="📦 GitHub Release ZIP Oluştur" Style="{StaticResource PrimaryButton}" Click="CreateReleaseBundleBtn_Click"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- COLLAPSIBLE CONSOLE LOG DRAWER -->
+            <Border x:Name="ConsoleDrawer" Grid.Row="2" Visibility="Collapsed" Height="140" Background="#06070B" BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="0,1,0,0" Padding="18,6">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <DockPanel Grid.Row="0" Margin="0,0,0,4">
+                        <TextBlock Text="SHINRAI LUNAR ENGINE CONSOLE" FontSize="10" FontWeight="Bold" Foreground="#10B981"/>
+                        <Button Content="Temizle" Style="{StaticResource SecondaryButton}" Padding="8,2" FontSize="10.5" HorizontalAlignment="Right" Click="ClearConsoleBtn_Click"/>
+                    </DockPanel>
+                    <TextBox x:Name="ConsoleTextBox" Grid.Row="1" Background="Transparent" Foreground="#A7F3D0" BorderThickness="0"
+                             FontFamily="Consolas" FontSize="11" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
+                </Grid>
+            </Border>
+
+            <!-- ==================== LUNAR BOTTOM STATUS BAR ==================== -->
+            <Border Grid.Row="3" Background="{StaticResource BgPanelBrush}" BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="0,1,0,0" CornerRadius="0,0,14,14" Padding="20,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Ellipse Width="8" Height="8" Fill="#10B981" Margin="0,0,8,0"/>
+                        <TextBlock x:Name="BottomEditionBadge" Text="1.21.11 • LUNAR SODIUM" FontSize="11.5" FontWeight="Bold" Foreground="#E2E8F0"/>
+                    </StackPanel>
+
+                    <Grid Grid.Column="2" VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="180"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="42"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" x:Name="StatusActionText" Text="Hazır — 1.21.11 (Sodium/OptiFine) &amp; 1.12.2 yerel motor aktif." FontSize="11.5" Foreground="#94A3B8" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                        <ProgressBar Grid.Column="2" x:Name="MainProgressBar" Height="6" Minimum="0" Maximum="100" Value="100" Background="#141824" Foreground="#10B981" BorderThickness="0" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="4" x:Name="StatusPercentText" Text="100%" FontSize="11" FontWeight="Bold" Foreground="#10B981" VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Content="📂 game_data" Style="{StaticResource SecondaryButton}" Padding="10,4" FontSize="11" Margin="0,0,6,0" Click="OpenGameDataFolder_Click"/>
+                        <Button x:Name="ToggleConsoleBtn" Content="📟 Konsol" Style="{StaticResource SecondaryButton}" Padding="10,4" FontSize="11" Click="ToggleConsoleBtn_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>
