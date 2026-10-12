@@ -1,12 +1,12 @@
-# Build intermediates
-bin/
-obj/
-Portable_Build/
+# Only ignore C# build folders at repository root (leading slash is critical so game_data/runtime/*/bin/ is NOT ignored!)
+/bin/
+/obj/
+/Portable_Build/
 *.pdb
 
-# Runtime logs & saves
+# Runtime logs & world saves
 game_data/.minecraft/logs/
 game_data/.minecraft/crash-reports/
 game_data/.minecraft/saves/
-Release_Output/
+/Release_Output/
 *.zip

@@ -1,0 +1,23 @@
+{
+  "quality": {
+    "clouds_quality": "OFF",
+    "weather_quality": "FAST",
+    "leaves_quality": "FAST",
+    "enable_vignette": false,
+    "enable_fog": false
+  },
+  "performance": {
+    "chunk_builder_threads": 0,
+    "always_defer_chunk_updates": true,
+    "animate_only_visible_textures": true,
+    "use_entity_culling": true,
+    "use_fog_occlusion": true,
+    "use_block_face_culling": true,
+    "use_no_error_gl_context": true
+  },
+  "advanced": {
+    "enable_memory_tracing": false,
+    "use_advanced_staging_buffers": true,
+    "cpu_render_ahead_limit": 3
+  }
+}

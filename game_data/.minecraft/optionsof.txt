@@ -1,0 +1,16 @@
+ofFogType:3
+ofFogStart:0.8
+ofSmoothFps:false
+ofSmoothWorld:true
+ofFastRender:true
+ofFastMath:true
+ofSmartAnimations:true
+ofLazyChunkLoading:true
+ofRenderRegions:true
+ofDynamicFov:false
+ofDynamicLights:2
+ofConnectedTextures:2
+ofSky:false
+ofStars:true
+ofSunMoon:false
+ofVignette:1

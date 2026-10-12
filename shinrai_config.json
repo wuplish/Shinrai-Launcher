@@ -1,0 +1,22 @@
+{
+  "Username": "wuplish",
+  "SelectedEdition": "Java",
+  "SelectedJavaVersion": "1.21.11",
+  "AllocatedRamMb": 4096,
+  "MinRamMb": 1024,
+  "JvmPreset": 1,
+  "CustomJvmArgs": "-XX:\u002BUseG1GC -XX:MaxGCPauseMillis=120 -XX:\u002BDisableExplicitGC",
+  "FullOfflineIsolation": true,
+  "AutoApplyFpsOptions": true,
+  "CustomMinecraftDir": "",
+  "CustomJavaExePath": "",
+  "CustomBedrockExePath": "",
+  "SelectedSkinPath": "C:\\Users\\wuplish\\Downloads\\MinecraftForSchool\\game_data\\skins\\Crimson_Samurai.png",
+  "SelectedCapePath": "C:\\Users\\wuplish\\Downloads\\MinecraftForSchool\\game_data\\capes\\Cyber_Cyan_Cape.png",
+  "IsSlimSkin": false,
+  "ApplySkinLocally": true,
+  "GitHubRepo": "wuplish/Shinrai-Launcher",
+  "GitHubReleaseTag": "latest",
+  "DirectPackUrl": "",
+  "LastDirectConnectIp": "192.168.1.10:25565"
+}

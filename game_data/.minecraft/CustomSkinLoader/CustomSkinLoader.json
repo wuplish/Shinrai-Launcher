@@ -1,0 +1,13 @@
+{
+  "enable": true,
+  "loadlist": [
+    {
+      "name": "ShinraiLocalSkin",
+      "type": "Legacy",
+      "checkPNG": false,
+      "skin": "LocalSkin/skins/{USERNAME}.png",
+      "model": "auto",
+      "cape": "LocalSkin/capes/{USERNAME}.png"
+    }
+  ]
+}
