@@ -8,8 +8,12 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>ShinraiLauncher</AssemblyName>
     <RootNamespace>ShinraiLauncher</RootNamespace>
-    <ApplicationTitle>Shinrai Minecraft Launcher</ApplicationTitle>
-    <Version>1.0.0</Version>
+    <ApplicationTitle>Shinrai Client — Lunar Edition</ApplicationTitle>
+    <Version>2.0.0</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Fonts\*.ttf" />
+  </ItemGroup>
 
 </Project>

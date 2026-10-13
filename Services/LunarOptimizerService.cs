@@ -10,7 +10,9 @@ public class LunarModToggleItem
     public string Id { get; set; } = "";
     public string Title { get; set; } = "";
     public string Subtitle { get; set; } = "";
-    public string Icon { get; set; } = "⚡";
+    public string IconPath { get; set; } = "";
+    public string BadgeBg { get; set; } = "#251B42";
+    public string BadgeFg { get; set; } = "#A78BFA";
     public bool IsEnabled { get; set; } = true;
     public string? AssociatedJarKeyword { get; set; }
 }
@@ -28,15 +30,15 @@ public static class LunarOptimizerService
 
     public static List<LunarModToggleItem> GetDefaultLunarMods() =>
     [
-        new() { Id = "sodium", Icon = "🚀", Title = "Sodium Engine", Subtitle = "OpenGL 4.6 Chunk Multithreading (+300% FPS)", IsEnabled = true, AssociatedJarKeyword = "sodium" },
-        new() { Id = "lithium", Icon = "⚙️", Title = "Lithium Physics", Subtitle = "Oyun fiziği, AI ve blok tick optimizasyonu", IsEnabled = true, AssociatedJarKeyword = "lithium" },
-        new() { Id = "ferritecore", Icon = "🧠", Title = "FerriteCore RAM", Subtitle = "Bellek kullanımını %45 azaltır (Okul PC dostu)", IsEnabled = true, AssociatedJarKeyword = "ferritecore" },
-        new() { Id = "entityculling", Icon = "👁️", Title = "Entity Culling", Subtitle = "Duvar arkasındaki mob ve oyuncuları işlemez", IsEnabled = true, AssociatedJarKeyword = "entityculling" },
-        new() { Id = "fullbright", Icon = "☀️", Title = "Fullbright (Gamma 10x)", Subtitle = "Mağaralarda ve gece meşalesiz %100 aydınlık", IsEnabled = true },
-        new() { Id = "nofog", Icon = "🌫️", Title = "No Fog & Fast Clouds", Subtitle = "Uzak mesafe sisini ve ağır bulutları kapatır", IsEnabled = true },
-        new() { Id = "pvp_particles", Icon = "⚔️", Title = "PvP Clean Particles", Subtitle = "Gereksiz patlama/iksir parçacıklarını azaltır", IsEnabled = true },
-        new() { Id = "vsync_off", Icon = "⚡", Title = "Zero Input Lag (260 FPS)", Subtitle = "VSync kapatır, fare gecikmesini sıfırlar", IsEnabled = true },
-        new() { Id = "optifine_fast", Icon = "💎", Title = "OptiFine Fast Math", Subtitle = "Fast Render, Smart Animations ve Dynamic FOV", IsEnabled = true }
+        new() { Id = "sodium", BadgeBg = "#2E1065", BadgeFg = "#C084FC", IconPath = "M13,2 L3,14 L12,14 L11,22 L21,10 L12,10 Z", Title = "Sodium Engine", Subtitle = "OpenGL 4.6 Chunk Multithreading (+300% FPS)", IsEnabled = true, AssociatedJarKeyword = "sodium" },
+        new() { Id = "lithium", BadgeBg = "#1E1B4B", BadgeFg = "#818CF8", IconPath = "M12,8 A4,4 0 1,0 12,16 A4,4 0 1,0 12,8 M12,2 L14,5 L19,4 L18,9 L22,12 L18,15 L19,20 L14,19 L12,22 L10,19 L5,20 L6,15 L2,12 L6,9 L5,4 L10,5 Z", Title = "Lithium Physics", Subtitle = "Oyun fiziği, AI ve blok tick optimizasyonu", IsEnabled = true, AssociatedJarKeyword = "lithium" },
+        new() { Id = "ferritecore", BadgeBg = "#082F49", BadgeFg = "#38BDF8", IconPath = "M6,4 H18 V20 H6 Z M2,8 H6 M2,12 H6 M2,16 H6 M18,8 H22 M18,12 H22 M18,16 H22", Title = "FerriteCore RAM", Subtitle = "Bellek kullanımını %45 azaltır (Okul PC dostu)", IsEnabled = true, AssociatedJarKeyword = "ferritecore" },
+        new() { Id = "entityculling", BadgeBg = "#3B0764", BadgeFg = "#E879F9", IconPath = "M1,12 C4,6 8,4 12,4 C16,4 20,6 23,12 C20,18 16,20 12,20 C8,20 4,18 1,12 Z M12,9 A3,3 0 1,0 12,15 A3,3 0 1,0 12,9", Title = "Entity Culling", Subtitle = "Duvar arkasındaki mob ve oyuncuları işlemez", IsEnabled = true, AssociatedJarKeyword = "entityculling" },
+        new() { Id = "fullbright", BadgeBg = "#451A03", BadgeFg = "#FBBF24", IconPath = "M12,7 A5,5 0 1,0 12,17 A5,5 0 1,0 12,7 M12,1 V4 M12,20 V23 M4.2,4.2 L6.3,6.3 M17.7,17.7 L19.8,19.8 M1,12 H4 M20,12 H23 M4.2,19.8 L6.3,17.7 M17.7,6.3 L19.8,4.2", Title = "Fullbright (Max Gamma)", Subtitle = "Mağaralarda ve gece meşalesiz %100 aydınlık", IsEnabled = true },
+        new() { Id = "nofog", BadgeBg = "#0C2D48", BadgeFg = "#7DD3FC", IconPath = "M4,10 H20 M2,14 H18 M6,18 H22 M7,6 H17", Title = "No Fog & Fast Clouds", Subtitle = "Uzak mesafe sisini ve ağır bulutları kapatır", IsEnabled = true },
+        new() { Id = "pvp_particles", BadgeBg = "#450A0A", BadgeFg = "#F87171", IconPath = "M14.5,17.5 L3,6 V3 H6 L17.5,14.5 M13,19 L19,13 M16,16 L21,21 M19,21 L21,19", Title = "PvP Clean Particles", Subtitle = "Gereksiz patlama/iksir parçacıklarını azaltır", IsEnabled = true },
+        new() { Id = "vsync_off", BadgeBg = "#2E1065", BadgeFg = "#A78BFA", IconPath = "M13,2 L3,14 L12,14 L11,22 L21,10 L12,10 Z", Title = "Zero Input Lag (260 FPS)", Subtitle = "VSync kapatır, fare gecikmesini sıfırlar", IsEnabled = true },
+        new() { Id = "optifine_fast", BadgeBg = "#172554", BadgeFg = "#60A5FA", IconPath = "M6,3 H18 L22,9 L12,21 L2,9 Z", Title = "OptiFine Fast Math", Subtitle = "Fast Render, Smart Animations ve Dynamic FOV", IsEnabled = true }
     ];
 
     /// <summary>

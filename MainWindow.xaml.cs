@@ -191,13 +191,13 @@ public partial class MainWindow : Window
         LaunchBtnTitleText.Text = "LAUNCH GAME";
         string lower = versionOrEdition.ToLowerInvariant();
         if (lower.Contains("bedrock"))
-            LaunchBtnSubtitleText.Text = "Shinrai Bedrock Edition (Local)";
+            LaunchBtnSubtitleText.Text = "Shinrai Bedrock Edition • Local";
         else if (lower.Contains("sodium") || lower.Contains("fabric"))
-            LaunchBtnSubtitleText.Text = "Shinrai 1.21.11 with 🚀 Fabric / Sodium";
+            LaunchBtnSubtitleText.Text = "Shinrai 1.21.11 with Fabric / Sodium";
         else if (lower.Contains("1.12"))
-            LaunchBtnSubtitleText.Text = "Shinrai 1.12.2 with ⚔️ Classic PvP";
+            LaunchBtnSubtitleText.Text = "Shinrai 1.12.2 with Classic PvP";
         else
-            LaunchBtnSubtitleText.Text = $"Shinrai {versionOrEdition} with 💎 Vanilla+";
+            LaunchBtnSubtitleText.Text = $"Shinrai {versionOrEdition} with Vanilla+";
     }
 
     // ==================== QUICK PROFILE SELECTION ====================
@@ -258,13 +258,13 @@ public partial class MainWindow : Window
         {
             var match = versions.FirstOrDefault(v => v.Id.Equals(_config.SelectedJavaVersion, StringComparison.OrdinalIgnoreCase)) ?? versions[0];
             JavaVersionComboBox.SelectedItem = match;
-            VersionStatusHintText.Text = $"✓ {versions.Count} yerel profil hazır (1.21.11 Sodium/Vanilla & 1.12.2).";
+            VersionStatusHintText.Text = $"{versions.Count} yerel profil hazır (1.21.11 Sodium/Vanilla & 1.12.2).";
             UpdateHeroLaunchButtonLabels(match.Id);
             BottomEditionBadge.Text = $"{match.Id.ToUpperInvariant()} • LUNAR";
         }
         else
         {
-            VersionStatusHintText.Text = "⚠️ LAUNCH butonuna bastığınızda tüm sürümler otomatik kurulacaktır.";
+            VersionStatusHintText.Text = "LAUNCH butonuna bastığınızda tüm sürümler otomatik kurulacaktır.";
             JavaRuntimeStatusText.Text = "Otomatik Kurulum Hazır";
             UpdateHeroLaunchButtonLabels(_config.SelectedJavaVersion);
         }
@@ -285,11 +285,11 @@ public partial class MainWindow : Window
             {
                 bool isPortable = javaPath.StartsWith(LauncherConfig.GetPortableRootDir(), StringComparison.OrdinalIgnoreCase);
                 string modeTag = isPortable ? "Portable (game_data/runtime)" : "Sistem Java";
-                JavaRuntimeStatusText.Text = $"✓ Java {item.RequiredJavaMajor}+ Hazır ({modeTag})";
+                JavaRuntimeStatusText.Text = $"Java {item.RequiredJavaMajor}+ Hazır ({modeTag})";
             }
             else
             {
-                JavaRuntimeStatusText.Text = $"⚠️ Java {item.RequiredJavaMajor} Bulunamadı ('☁️ GITHUB & KURULUM' sekmesinden Portable Java indirin)";
+                JavaRuntimeStatusText.Text = $"Java {item.RequiredJavaMajor} Bulunamadı (GitHub Sekmesinden Kurun)";
             }
         }
     }

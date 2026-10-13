@@ -3,7 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <!-- Cosmic Obsidian & Electric Violet Palette (Zero Green!) -->
+        <!-- Embedded Poppins Font Family (Compiled directly into EXE) -->
+        <FontFamily x:Key="PoppinsFont">pack://application:,,,/Assets/Fonts/#Poppins</FontFamily>
+
+        <!-- Cosmic Obsidian & Electric Violet Palette -->
         <SolidColorBrush x:Key="BgDeepBrush" Color="#090A0F"/>
         <SolidColorBrush x:Key="BgCanvasBrush" Color="#0E1017"/>
         <SolidColorBrush x:Key="BgPanelBrush" Color="#11131C"/>
@@ -21,12 +24,164 @@
         <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F8FAFC"/>
         <SolidColorBrush x:Key="TextSecondaryBrush" Color="#8E96AA"/>
 
+        <!-- ==================== EMBEDDED CUSTOM VECTOR ICON GEOMETRIES (ZERO EMOJIS!) ==================== -->
+        <Geometry x:Key="GeoMoon">M21,12.79 A9,9 0 1,1 11.21,3 A7,7 0 0,0 21,12.79 Z</Geometry>
+        <Geometry x:Key="GeoRocket">M4.5,16.5 C3,18 2,21.5 2,21.5 C2,21.5 5.5,20.5 7,19 C7.9,18.1 7.9,16.7 7,15.8 C6.1,14.9 4.7,14.9 4.5,16.5 Z M12,15 L9,12 C10.5,8.5 14,5 21,3 C19,10 15.5,13.5 12,15 Z M9,12 L4,11 L7,8 L10.5,9.5 M12,15 L13,20 L16,17 L14.5,13.5</Geometry>
+        <Geometry x:Key="GeoPuzzle">M19.4,13 A1.6,1.6 0 0,0 21,14.6 V19 A2,2 0 0,1 19,21 H14.6 A1.6,1.6 0 0,1 13,19.4 A1.6,1.6 0 0,0 9.8,19.4 A1.6,1.6 0 0,1 8.2,21 H5 A2,2 0 0,1 3,19 V15.8 A1.6,1.6 0 0,1 4.6,14.2 A1.6,1.6 0 0,0 4.6,11 A1.6,1.6 0 0,1 3,9.4 V5 A2,2 0 0,1 5,3 H9.4 A1.6,1.6 0 0,0 11,4.6 A1.6,1.6 0 0,0 14.2,4.6 A1.6,1.6 0 0,0 15.8,3 H19 A2,2 0 0,1 21,5 V9.8 A1.6,1.6 0 0,0 19.4,11.4 Z</Geometry>
+        <Geometry x:Key="GeoGlobe">M12,2 A10,10 0 1,0 12,22 A10,10 0 1,0 12,2 M2,12 H22 M12,2 C14.5,4.7 16,8.2 16,12 C16,15.8 14.5,19.3 12,22 C9.5,19.3 8,15.8 8,12 C8,8.2 9.5,4.7 12,2 Z</Geometry>
+        <Geometry x:Key="GeoShirt">M20.38,3.46 L16,2 A4,4 0 0,1 12,5 A4,4 0 0,1 8,2 L3.62,3.46 A2,2 0 0,0 2.34,5.79 L3.8,10.27 A1,1 0 0,0 4.75,11 H7 V20 A2,2 0 0,0 9,22 H15 A2,2 0 0,0 17,20 V11 H19.25 A1,1 0 0,0 20.2,10.27 L21.66,5.79 A2,2 0 0,0 20.38,3.46 Z</Geometry>
+        <Geometry x:Key="GeoCloud">M17.5,19 H7 A5,5 0 0,1 6.3,9.05 A7,7 0 0,1 20,10.5 A4.5,4.5 0 0,1 17.5,19 Z</Geometry>
+        <Geometry x:Key="GeoPlus">M12,5 V19 M5,12 H19</Geometry>
+        <Geometry x:Key="GeoGear">M12,8.5 A3.5,3.5 0 1,0 12,15.5 A3.5,3.5 0 1,0 12,8.5 M19.4,15 A1.65,1.65 0 0,0 19.7,16.8 L19.8,16.9 A2,2 0 0,1 16.9,19.8 L16.8,19.7 A1.65,1.65 0 0,0 15,19.4 A1.65,1.65 0 0,0 14,20.9 V21 A2,2 0 0,1 10,21 V20.9 A1.65,1.65 0 0,0 9,19.4 A1.65,1.65 0 0,0 7.2,19.7 L7.1,19.8 A2,2 0 0,1 4.2,16.9 L4.3,16.8 A1.65,1.65 0 0,0 4.6,15 A1.65,1.65 0 0,0 3.1,14 H3 A2,2 0 0,1 3,10 H3.1 A1.65,1.65 0 0,0 4.6,9 A1.65,1.65 0 0,0 4.3,7.2 L4.2,7.1 A2,2 0 0,1 7.1,4.2 L7.2,4.3 A1.65,1.65 0 0,0 9,4.6 H9.1 A1.65,1.65 0 0,0 10,3.1 V3 A2,2 0 0,1 14,3 V3.1 A1.65,1.65 0 0,0 15,4.6 A1.65,1.65 0 0,0 16.8,4.3 L16.9,4.2 A2,2 0 0,1 19.8,7.1 L19.7,7.2 A1.65,1.65 0 0,0 19.4,9 V9.1 A1.65,1.65 0 0,0 20.9,10 H21 A2,2 0 0,1 21,14 H20.9 A1.65,1.65 0 0,0 19.4,15 Z</Geometry>
+        <Geometry x:Key="GeoBolt">M13,2 L3,14 H12 L11,22 L21,10 H12 Z</Geometry>
+        <Geometry x:Key="GeoSwords">M14.5,17.5 L3,6 V3 H6 L17.5,14.5 M13,19 L19,13 M16,16 L21,21 M19,21 L21,19 M9.5,17.5 L21,6 V3 H18 L6.5,14.5 M11,19 L5,13 M8,16 L3,21 M5,21 L3,19</Geometry>
+        <Geometry x:Key="GeoDiamond">M6,3 H18 L22,9 L12,21 L2,9 Z M2,9 H22 M12,21 L8,9 L12,3 L16,9 Z</Geometry>
+        <Geometry x:Key="GeoCube">M21,16 V8 A2,2 0 0,0 20,6.27 L13,2.27 A2,2 0 0,0 11,2.27 L4,6.27 A2,2 0 0,0 3,8 V16 A2,2 0 0,0 4,17.73 L11,21.73 A2,2 0 0,0 13,21.73 L20,17.73 A2,2 0 0,0 21,16 Z M3.27,6.96 L12,12.01 L20.73,6.96 M12,22.08 V12</Geometry>
+        <Geometry x:Key="GeoArrowRight">M5,12 H19 M13,6 L19,12 L13,18</Geometry>
+        <Geometry x:Key="GeoRefresh">M21,4 V10 H15 M3,20 V14 H9 M3.51,9 A9,9 0 0,1 18.36,5.64 L21,10 M20.49,15 A9,9 0 0,1 5.64,18.36 L3,14</Geometry>
+        <Geometry x:Key="GeoFolder">M22,19 A2,2 0 0,1 20,21 H4 A2,2 0 0,1 2,19 V5 A2,2 0 0,1 4,3 H9 L11,6 H20 A2,2 0 0,1 22,8 Z</Geometry>
+        <Geometry x:Key="GeoTerminal">M4,17 L10,11 L4,5 M12,19 H20</Geometry>
+        <Geometry x:Key="GeoSun">M12,7 A5,5 0 1,0 12,17 A5,5 0 1,0 12,7 M12,1 V3 M12,21 V23 M4.22,4.22 L5.64,5.64 M18.36,18.36 L19.78,19.78 M1,12 H3 M21,12 H23 M4.22,19.78 L5.64,18.36 M18.36,5.64 L19.78,4.22</Geometry>
+        <Geometry x:Key="GeoChevronDown">M6,9 L12,15 L18,9</Geometry>
+
+        <!-- Default TextBlock & Control Typography -> Embedded Poppins -->
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource PoppinsFont}"/>
+        </Style>
+
+        <!-- Slim Dark Custom ScrollBar & ScrollViewer (Eliminates White Windows ScrollBar!) -->
+        <Style TargetType="ScrollBar">
+            <Setter Property="Width" Value="6"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid Background="Transparent" Width="6">
+                            <Track x:Name="PART_Track" IsDirectionReversed="true">
+                                <Track.Thumb>
+                                    <Thumb>
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="Thumb">
+                                                <Border Background="#282E46" CornerRadius="3" Margin="1,2"/>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Dark Lunar ComboBox & ComboBoxItem (Eliminates White Windows ComboBox!) -->
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="FontFamily" Value="{StaticResource PoppinsFont}"/>
+            <Setter Property="Background" Value="#121521"/>
+            <Setter Property="Foreground" Value="#E2E8F0"/>
+            <Setter Property="Padding" Value="10,7"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" CornerRadius="6" Margin="2,1">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#251D42"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#31255A"/>
+                                <Setter Property="Foreground" Value="#C4B5FD"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="FontFamily" Value="{StaticResource PoppinsFont}"/>
+            <Setter Property="Foreground" Value="#F8FAFC"/>
+            <Setter Property="Background" Value="#0E111B"/>
+            <Setter Property="BorderBrush" Value="#262C44"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton"
+                                          Focusable="false"
+                                          IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="Border" Background="#0E111B" BorderBrush="#262C44" BorderThickness="1" CornerRadius="8">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="28"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Path Grid.Column="1" Data="{StaticResource GeoChevronDown}" Stroke="#94A3B8" StrokeThickness="1.8"
+                                                      Width="10" Height="6" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Border" Property="Background" Value="#151928"/>
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="#6366F1"/>
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="#8B5CF6"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+
+                            <ContentPresenter x:Name="ContentSite"
+                                              IsHitTestVisible="False"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                              Margin="11,0,28,0"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Left"/>
+
+                            <Popup x:Name="Popup"
+                                   Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Slide">
+                                <Grid x:Name="DropDown"
+                                      SnapsToDevicePixels="True"
+                                      MinWidth="{TemplateBinding ActualWidth}"
+                                      MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <Border x:Name="DropDownBorder" Background="#121521" BorderBrush="#312E81" BorderThickness="1" CornerRadius="8" Padding="3" Margin="0,4,0,0">
+                                        <ScrollViewer SnapsToDevicePixels="True">
+                                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                        </ScrollViewer>
+                                    </Border>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- Cosmic Violet Primary Button -->
         <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="FontFamily" Value="{StaticResource PoppinsFont}"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="12.5"/>
-            <Setter Property="Padding" Value="16,9"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="15,8"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
@@ -64,8 +219,9 @@
             </Setter>
         </Style>
 
-        <!-- Hero Launchpad Center Button (Lunar Center Launch Style with Electric Violet/Indigo Glow) -->
+        <!-- Hero Launchpad Center Button -->
         <Style x:Key="HeroLaunchButton" TargetType="Button">
+            <Setter Property="FontFamily" Value="{StaticResource PoppinsFont}"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
@@ -73,7 +229,6 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Grid>
-                            <!-- Outer Neon Glow -->
                             <Border x:Name="glow" CornerRadius="12" Margin="-2">
                                 <Border.Background>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -86,8 +241,7 @@
                                     <DropShadowEffect Color="#7C3AED" BlurRadius="28" ShadowDepth="0" Opacity="0.75"/>
                                 </Border.Effect>
                             </Border>
-                            <!-- Main Button Body -->
-                            <Border x:Name="border" CornerRadius="11" BorderBrush="#C4B5FD" BorderThickness="1" Padding="24,10">
+                            <Border x:Name="border" CornerRadius="11" BorderBrush="#C4B5FD" BorderThickness="1" Padding="22,10">
                                 <Border.Background>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                         <GradientStop Color="#7C3AED" Offset="0.0"/>
@@ -123,12 +277,13 @@
 
         <!-- Secondary Dark Glass Button -->
         <Style x:Key="SecondaryButton" TargetType="Button">
-            <Setter Property="Background" Value="#1B1F30"/>
+            <Setter Property="FontFamily" Value="{StaticResource PoppinsFont}"/>
+            <Setter Property="Background" Value="#181C2B"/>
             <Setter Property="Foreground" Value="#E2E8F0"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="Padding" Value="13,8"/>
-            <Setter Property="BorderBrush" Value="#2B314A"/>
+            <Setter Property="FontSize" Value="11.5"/>
+            <Setter Property="Padding" Value="12,7"/>
+            <Setter Property="BorderBrush" Value="#282E46"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
@@ -139,7 +294,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#252B42"/>
+                                <Setter TargetName="border" Property="Background" Value="#23293E"/>
                                 <Setter TargetName="border" Property="BorderBrush" Value="#6366F1"/>
                                 <Setter Property="Foreground" Value="White"/>
                             </Trigger>
@@ -152,22 +307,19 @@
             </Setter>
         </Style>
 
-        <!-- Left Icon Rail Navigation Button (Authentic Lunar Client Left Sidebar Style) -->
+        <!-- Left Icon Rail Navigation Button (Custom Vector Path Support) -->
         <Style x:Key="LunarRailNavButton" TargetType="RadioButton">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#6E768A"/>
-            <Setter Property="Width" Value="44"/>
-            <Setter Property="Height" Value="42"/>
+            <Setter Property="Foreground" Value="#64748B"/>
+            <Setter Property="Width" Value="42"/>
+            <Setter Property="Height" Value="40"/>
             <Setter Property="Margin" Value="0,4"/>
-            <Setter Property="FontSize" Value="18"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
                         <Grid>
-                            <!-- Left Active Indicator Pill -->
-                            <Border x:Name="activeBar" Width="3.5" Height="22" CornerRadius="2" Background="Transparent" HorizontalAlignment="Left" Margin="-6,0,0,0"/>
-                            <!-- Icon Container -->
+                            <Border x:Name="activeBar" Width="3.5" Height="22" CornerRadius="2" Background="Transparent" HorizontalAlignment="Left" Margin="-7,0,0,0"/>
                             <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="10" BorderBrush="Transparent" BorderThickness="1">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
@@ -175,13 +327,13 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="bd" Property="Background" Value="#161926"/>
-                                <Setter Property="Foreground" Value="#E2E8F0"/>
+                                <Setter Property="Foreground" Value="#CBD5E1"/>
                             </Trigger>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="bd" Property="Background" Value="#1D2033"/>
-                                <Setter TargetName="bd" Property="BorderBrush" Value="#3730A3"/>
-                                <Setter TargetName="activeBar" Property="Background" Value="#8B5CF6"/>
-                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                                <Setter TargetName="bd" Property="Background" Value="#1F1938"/>
+                                <Setter TargetName="bd" Property="BorderBrush" Value="#5B21B6"/>
+                                <Setter TargetName="activeBar" Property="Background" Value="#A855F7"/>
+                                <Setter Property="Foreground" Value="#C4B5FD"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -191,6 +343,7 @@
 
         <!-- Window Control Button -->
         <Style x:Key="WinCtrlButton" TargetType="Button">
+            <Setter Property="FontFamily" Value="{StaticResource PoppinsFont}"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#8E96AA"/>
             <Setter Property="Width" Value="30"/>
@@ -216,13 +369,14 @@
 
         <!-- Dark TextBox -->
         <Style x:Key="DarkTextBox" TargetType="TextBox">
+            <Setter Property="FontFamily" Value="{StaticResource PoppinsFont}"/>
             <Setter Property="Background" Value="#0B0D14"/>
             <Setter Property="Foreground" Value="#F8FAFC"/>
             <Setter Property="CaretBrush" Value="#8B5CF6"/>
             <Setter Property="BorderBrush" Value="#252A3F"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="10,7"/>
-            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="FontSize" Value="12"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
     </Application.Resources>
