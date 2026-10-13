@@ -327,7 +327,7 @@
                                                 <GradientStop Color="#0F172A" Offset="1.0"/>
                                             </LinearGradientBrush>
                                         </Border.Background>
-                                        <Grid Padding="18,14">
+                                        <Grid Margin="18,14">
                                             <!-- Top-Left Glowing Violet Status Orb -->
                                             <Ellipse Width="12" Height="12" Fill="#A855F7" HorizontalAlignment="Left" VerticalAlignment="Top">
                                                 <Ellipse.Effect>
@@ -368,7 +368,7 @@
                                                 <GradientStop Color="#1F1209" Offset="1.0"/>
                                             </LinearGradientBrush>
                                         </Border.Background>
-                                        <Grid Padding="18,14">
+                                        <Grid Margin="18,14">
                                             <!-- Top-Left Glowing Amber/Crimson Status Orb -->
                                             <Ellipse Width="12" Height="12" Fill="#F59E0B" HorizontalAlignment="Left" VerticalAlignment="Top">
                                                 <Ellipse.Effect>
@@ -408,7 +408,7 @@
                                                 <GradientStop Color="#111827" Offset="1.0"/>
                                             </LinearGradientBrush>
                                         </Border.Background>
-                                        <Grid Padding="18,14">
+                                        <Grid Margin="18,14">
                                             <Ellipse Width="12" Height="12" Fill="#38BDF8" HorizontalAlignment="Left" VerticalAlignment="Top"/>
 
                                             <StackPanel VerticalAlignment="Center" Margin="6,4,0,0">
@@ -434,7 +434,7 @@
                                                 <GradientStop Color="#11131F" Offset="1.0"/>
                                             </LinearGradientBrush>
                                         </Border.Background>
-                                        <Grid Padding="18,14">
+                                        <Grid Margin="18,14">
                                             <Ellipse Width="12" Height="12" Fill="#EC4899" HorizontalAlignment="Left" VerticalAlignment="Top"/>
 
                                             <StackPanel VerticalAlignment="Center" Margin="6,4,0,0">

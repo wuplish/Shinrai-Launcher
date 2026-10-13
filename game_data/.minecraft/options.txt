@@ -14,7 +14,7 @@ darknessEffectScale:0.0
 glintSpeed:0.5
 glintStrength:0.75
 graphicsPreset:"custom"
-prioritizeChunkUpdates:0
+PrioritizeChunkUpdates:0
 fullscreen:false
 gamma:1.0
 guiScale:0
@@ -183,3 +183,4 @@ modelPart_right_sleeve:true
 modelPart_left_pants_leg:true
 modelPart_right_pants_leg:true
 modelPart_hat:true
+graphicsMode:0
