@@ -149,12 +149,17 @@ public static class GitHubReleaseService
             int total = Math.Max(1, archive.Entries.Count);
             int current = 0;
 
+            // Detect GitHub repo branch archive (e.g., "Shinrai-Launcher-main/game_data/...")
+            bool isRepoBranchZip = archive.Entries.Any(e =>
+                e.FullName.Contains("/game_data/", StringComparison.OrdinalIgnoreCase) ||
+                e.FullName.Contains("\\game_data\\", StringComparison.OrdinalIgnoreCase));
+
             // Check if archive already has top-level "game_data/" prefix
             bool hasGameDataPrefix = archive.Entries.Any(e =>
                 e.FullName.StartsWith("game_data/", StringComparison.OrdinalIgnoreCase) ||
                 e.FullName.StartsWith("game_data\\", StringComparison.OrdinalIgnoreCase));
 
-            string baseTargetDir = hasGameDataPrefix ? rootDir : gameDataDir;
+            string baseTargetDir = (isRepoBranchZip || hasGameDataPrefix) ? rootDir : gameDataDir;
 
             foreach (var entry in archive.Entries)
             {
@@ -162,7 +167,16 @@ public static class GitHubReleaseService
                 if (string.IsNullOrEmpty(entry.Name))
                     continue;
 
-                string destPath = Path.GetFullPath(Path.Combine(baseTargetDir, entry.FullName));
+                string relEntryPath = entry.FullName.Replace('\\', '/');
+                if (isRepoBranchZip)
+                {
+                    int gdIdx = relEntryPath.IndexOf("/game_data/", StringComparison.OrdinalIgnoreCase);
+                    if (gdIdx < 0)
+                        continue; // Only extract game_data/ contents when pulling from full repo zip
+                    relEntryPath = relEntryPath[(gdIdx + 1)..]; // Keep "game_data/..."
+                }
+
+                string destPath = Path.GetFullPath(Path.Combine(baseTargetDir, relEntryPath));
                 string? destFolder = Path.GetDirectoryName(destPath);
                 if (!string.IsNullOrEmpty(destFolder))
                     Directory.CreateDirectory(destFolder);

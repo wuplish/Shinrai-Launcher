@@ -77,7 +77,7 @@ public partial class MainWindow : Window
 
         GitHubRepoTextBox.Text = _config.GitHubRepo;
         DirectZipUrlTextBox.Text = string.IsNullOrWhiteSpace(_config.DirectPackUrl)
-            ? $"https://github.com/{_config.GitHubRepo}/releases/latest/download/shinrai-game-bundle.zip"
+            ? $"https://github.com/{_config.GitHubRepo}/archive/refs/heads/main.zip"
             : _config.DirectPackUrl;
         DirectLanIpTextBox.Text = _config.LastDirectConnectIp;
 
@@ -958,8 +958,17 @@ public partial class MainWindow : Window
                 string expectedJson = Path.Combine(_config.GetMinecraftDir(), "versions", targetId, $"{targetId}.json");
                 if (!File.Exists(expectedJson))
                 {
-                    AppendLog($"[Lunar Otomatik Hazırlayıcı] '{targetId}' henüz local klasörde yok, otomatik kuruluyor...");
-                    await LunarOptimizerService.SetupTargetVersionsWithSodiumAsync(_config, UpdateProgress, AppendLog);
+                    string repoZipUrl = $"https://github.com/{_config.GitHubRepo}/archive/refs/heads/main.zip";
+                    AppendLog($"[GitHub Otomatik Kurulum] Sadece 'ShinraiLauncher.exe' algılandı! '{_config.GitHubRepo}' deponuzdan tüm 'game_data' (Java 21/8 + 1.21.11 Sodium + 1.12.2) indiriliyor...");
+                    try
+                    {
+                        await GitHubReleaseService.DownloadAndExtractPackageAsync(repoZipUrl, UpdateProgress, AppendLog);
+                    }
+                    catch (Exception repoEx)
+                    {
+                        AppendLog($"[GitHub Arşiv Uyarı] {repoEx.Message} -> Doğrudan kurulum motoruna geçiliyor...");
+                        await LunarOptimizerService.SetupTargetVersionsWithSodiumAsync(_config, UpdateProgress, AppendLog);
+                    }
                     RefreshInstalledVersions();
                     RefreshLocalModsList();
                 }
