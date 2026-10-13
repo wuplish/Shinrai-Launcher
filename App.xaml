@@ -3,37 +3,41 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <SolidColorBrush x:Key="BgDeepBrush" Color="#08090E"/>
-        <SolidColorBrush x:Key="BgPanelBrush" Color="#0D0F17"/>
-        <SolidColorBrush x:Key="BgCardBrush" Color="#131622"/>
-        <SolidColorBrush x:Key="BgInputBrush" Color="#0A0C13"/>
-        <SolidColorBrush x:Key="BorderSubtleBrush" Color="#22273B"/>
-        <SolidColorBrush x:Key="LunarEmeraldBrush" Color="#10B981"/>
-        <SolidColorBrush x:Key="LunarEmeraldHoverBrush" Color="#34D399"/>
+        <!-- Cosmic Obsidian & Electric Violet Palette (Zero Green!) -->
+        <SolidColorBrush x:Key="BgDeepBrush" Color="#090A0F"/>
+        <SolidColorBrush x:Key="BgCanvasBrush" Color="#0E1017"/>
+        <SolidColorBrush x:Key="BgPanelBrush" Color="#11131C"/>
+        <SolidColorBrush x:Key="BgCardBrush" Color="#151824"/>
+        <SolidColorBrush x:Key="BgInputBrush" Color="#0B0D14"/>
+        <SolidColorBrush x:Key="BorderSubtleBrush" Color="#222638"/>
+        <SolidColorBrush x:Key="LunarEmeraldBrush" Color="#8B5CF6"/>
+        <SolidColorBrush x:Key="LunarEmeraldHoverBrush" Color="#A78BFA"/>
         <SolidColorBrush x:Key="LunarVioletBrush" Color="#7C3AED"/>
-        <SolidColorBrush x:Key="AccentCrimsonBrush" Color="#10B981"/>
-        <SolidColorBrush x:Key="AccentCrimsonHoverBrush" Color="#059669"/>
-        <SolidColorBrush x:Key="AccentEmeraldBrush" Color="#10B981"/>
+        <SolidColorBrush x:Key="AccentCrimsonBrush" Color="#8B5CF6"/>
+        <SolidColorBrush x:Key="AccentCrimsonHoverBrush" Color="#7C3AED"/>
+        <SolidColorBrush x:Key="AccentEmeraldBrush" Color="#8B5CF6"/>
         <SolidColorBrush x:Key="AccentCyanBrush" Color="#38BDF8"/>
+        <SolidColorBrush x:Key="AccentPinkBrush" Color="#EC4899"/>
         <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F8FAFC"/>
-        <SolidColorBrush x:Key="TextSecondaryBrush" Color="#8E9BAE"/>
+        <SolidColorBrush x:Key="TextSecondaryBrush" Color="#8E96AA"/>
 
-        <!-- Lunar Emerald Primary Button -->
+        <!-- Cosmic Violet Primary Button -->
         <Style x:Key="PrimaryButton" TargetType="Button">
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Padding" Value="18,10"/>
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="Padding" Value="16,9"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                        <Border x:Name="border" CornerRadius="8" Padding="{TemplateBinding Padding}" BorderBrush="#9F7AEA" BorderThickness="1">
                             <Border.Background>
                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                    <GradientStop Color="#10B981" Offset="0.0"/>
-                                    <GradientStop Color="#059669" Offset="1.0"/>
+                                    <GradientStop Color="#8B5CF6" Offset="0.0"/>
+                                    <GradientStop Color="#6366F1" Offset="0.55"/>
+                                    <GradientStop Color="#4F46E5" Offset="1.0"/>
                                 </LinearGradientBrush>
                             </Border.Background>
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -43,11 +47,13 @@
                                 <Setter TargetName="border" Property="Background">
                                     <Setter.Value>
                                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                            <GradientStop Color="#34D399" Offset="0.0"/>
-                                            <GradientStop Color="#10B981" Offset="1.0"/>
+                                            <GradientStop Color="#A78BFA" Offset="0.0"/>
+                                            <GradientStop Color="#818CF8" Offset="0.55"/>
+                                            <GradientStop Color="#6366F1" Offset="1.0"/>
                                         </LinearGradientBrush>
                                     </Setter.Value>
                                 </Setter>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#C4B5FD"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter TargetName="border" Property="Opacity" Value="0.45"/>
@@ -58,14 +64,71 @@
             </Setter>
         </Style>
 
-        <!-- Lunar Secondary Glass Button -->
+        <!-- Hero Launchpad Center Button (Lunar Center Launch Style with Electric Violet/Indigo Glow) -->
+        <Style x:Key="HeroLaunchButton" TargetType="Button">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <!-- Outer Neon Glow -->
+                            <Border x:Name="glow" CornerRadius="12" Margin="-2">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#A855F7" Offset="0.0"/>
+                                        <GradientStop Color="#6366F1" Offset="0.5"/>
+                                        <GradientStop Color="#06B6D4" Offset="1.0"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#7C3AED" BlurRadius="28" ShadowDepth="0" Opacity="0.75"/>
+                                </Border.Effect>
+                            </Border>
+                            <!-- Main Button Body -->
+                            <Border x:Name="border" CornerRadius="11" BorderBrush="#C4B5FD" BorderThickness="1" Padding="24,10">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#7C3AED" Offset="0.0"/>
+                                        <GradientStop Color="#5B21B6" Offset="0.45"/>
+                                        <GradientStop Color="#4338CA" Offset="1.0"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#9333EA" Offset="0.0"/>
+                                            <GradientStop Color="#6D28D9" Offset="0.45"/>
+                                            <GradientStop Color="#4F46E5" Offset="1.0"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#E9D5FF"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.55"/>
+                                <Setter TargetName="glow" Property="Opacity" Value="0.2"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Secondary Dark Glass Button -->
         <Style x:Key="SecondaryButton" TargetType="Button">
-            <Setter Property="Background" Value="#191D2C"/>
+            <Setter Property="Background" Value="#1B1F30"/>
             <Setter Property="Foreground" Value="#E2E8F0"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="12.5"/>
-            <Setter Property="Padding" Value="14,9"/>
-            <Setter Property="BorderBrush" Value="#2A3149"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="13,8"/>
+            <Setter Property="BorderBrush" Value="#2B314A"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
@@ -76,8 +139,9 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#23293E"/>
-                                <Setter TargetName="border" Property="BorderBrush" Value="#434E70"/>
+                                <Setter TargetName="border" Property="Background" Value="#252B42"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#6366F1"/>
+                                <Setter Property="Foreground" Value="White"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter TargetName="border" Property="Opacity" Value="0.45"/>
@@ -88,32 +152,35 @@
             </Setter>
         </Style>
 
-        <!-- Lunar Top Navbar Tab Pill -->
-        <Style x:Key="LunarTopNavButton" TargetType="RadioButton">
+        <!-- Left Icon Rail Navigation Button (Authentic Lunar Client Left Sidebar Style) -->
+        <Style x:Key="LunarRailNavButton" TargetType="RadioButton">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#8E9BAE"/>
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Padding" Value="11,8"/>
-            <Setter Property="Margin" Value="2,0"/>
+            <Setter Property="Foreground" Value="#6E768A"/>
+            <Setter Property="Width" Value="44"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Margin" Value="0,4"/>
+            <Setter Property="FontSize" Value="18"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
                         <Grid>
-                            <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <!-- Left Active Indicator Pill -->
+                            <Border x:Name="activeBar" Width="3.5" Height="22" CornerRadius="2" Background="Transparent" HorizontalAlignment="Left" Margin="-6,0,0,0"/>
+                            <!-- Icon Container -->
+                            <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="10" BorderBrush="Transparent" BorderThickness="1">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
-                            <Border x:Name="bar" Height="2.5" Width="22" Background="Transparent" CornerRadius="1.5" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="bd" Property="Background" Value="#161A28"/>
-                                <Setter Property="Foreground" Value="#F1F5F9"/>
+                                <Setter TargetName="bd" Property="Background" Value="#161926"/>
+                                <Setter Property="Foreground" Value="#E2E8F0"/>
                             </Trigger>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="bd" Property="Background" Value="#1B2032"/>
-                                <Setter TargetName="bar" Property="Background" Value="#10B981"/>
+                                <Setter TargetName="bd" Property="Background" Value="#1D2033"/>
+                                <Setter TargetName="bd" Property="BorderBrush" Value="#3730A3"/>
+                                <Setter TargetName="activeBar" Property="Background" Value="#8B5CF6"/>
                                 <Setter Property="Foreground" Value="#FFFFFF"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -125,9 +192,9 @@
         <!-- Window Control Button -->
         <Style x:Key="WinCtrlButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#94A3B8"/>
-            <Setter Property="Width" Value="34"/>
-            <Setter Property="Height" Value="30"/>
+            <Setter Property="Foreground" Value="#8E96AA"/>
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Height" Value="26"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
@@ -138,7 +205,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="bd" Property="Background" Value="#23293E"/>
+                                <Setter TargetName="bd" Property="Background" Value="#23283B"/>
                                 <Setter Property="Foreground" Value="White"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -149,13 +216,13 @@
 
         <!-- Dark TextBox -->
         <Style x:Key="DarkTextBox" TargetType="TextBox">
-            <Setter Property="Background" Value="#0A0C13"/>
+            <Setter Property="Background" Value="#0B0D14"/>
             <Setter Property="Foreground" Value="#F8FAFC"/>
-            <Setter Property="CaretBrush" Value="#10B981"/>
-            <Setter Property="BorderBrush" Value="#252B40"/>
+            <Setter Property="CaretBrush" Value="#8B5CF6"/>
+            <Setter Property="BorderBrush" Value="#252A3F"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="10,7"/>
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontSize" Value="12.5"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
     </Application.Resources>

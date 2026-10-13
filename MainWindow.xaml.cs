@@ -61,6 +61,8 @@ public partial class MainWindow : Window
         LunarOptimizerService.ApplyAllLunarOptimizations(_config.GetMinecraftDir(), _lunarMods);
 
         UsernameTextBox.Text = _config.Username;
+        if (GreetingUsernameText != null)
+            GreetingUsernameText.Text = _config.Username;
         UpdateUuidPreview();
 
         RamSlider.Value = Math.Clamp(_config.AllocatedRamMb, 1024, 12288);
@@ -128,6 +130,8 @@ public partial class MainWindow : Window
         string clean = OfflineAuthService.SanitizeUsername(UsernameTextBox.Text);
         string uuid = OfflineAuthService.GenerateOfflineUuid(clean);
         UuidPreviewText.Text = $"UUID: {uuid}";
+        if (GreetingUsernameText != null)
+            GreetingUsernameText.Text = clean;
     }
 
     private void UsernameTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -148,9 +152,20 @@ public partial class MainWindow : Window
         ViewSkin.Visibility = NavSkinBtn.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
         ViewLan.Visibility = NavLanBtn.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
         ViewGithub.Visibility = NavGithubBtn.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+
+        if (TopBreadcrumbText != null)
+        {
+            if (NavPlayBtn.IsChecked == true) TopBreadcrumbText.Text = "Launchpad";
+            else if (NavFpsBtn.IsChecked == true) TopBreadcrumbText.Text = "Mods & FPS Engine";
+            else if (NavLanBtn.IsChecked == true) TopBreadcrumbText.Text = "School LAN Satellite";
+            else if (NavSkinBtn.IsChecked == true) TopBreadcrumbText.Text = "Skin & Cape Studio";
+            else if (NavGithubBtn.IsChecked == true) TopBreadcrumbText.Text = "GitHub Cloud & Pack";
+        }
     }
 
     private void GoToGitHubTab_Click(object sender, RoutedEventArgs e) => NavGithubBtn.IsChecked = true;
+    private void OpenFpsSettingsFromHero_Click(object sender, RoutedEventArgs e) => NavFpsBtn.IsChecked = true;
+    private void OpenLanTabFromSidebar_Click(object sender, RoutedEventArgs e) => NavLanBtn.IsChecked = true;
 
     private void OpenGameDataFolder_Click(object sender, RoutedEventArgs e)
     {
@@ -168,6 +183,23 @@ public partial class MainWindow : Window
 
     private void ClearConsoleBtn_Click(object sender, RoutedEventArgs e) => ConsoleTextBox.Clear();
 
+    private void UpdateHeroLaunchButtonLabels(string versionOrEdition)
+    {
+        if (LaunchBtnTitleText == null || LaunchBtnSubtitleText == null)
+            return;
+
+        LaunchBtnTitleText.Text = "LAUNCH GAME";
+        string lower = versionOrEdition.ToLowerInvariant();
+        if (lower.Contains("bedrock"))
+            LaunchBtnSubtitleText.Text = "Shinrai Bedrock Edition (Local)";
+        else if (lower.Contains("sodium") || lower.Contains("fabric"))
+            LaunchBtnSubtitleText.Text = "Shinrai 1.21.11 with 🚀 Fabric / Sodium";
+        else if (lower.Contains("1.12"))
+            LaunchBtnSubtitleText.Text = "Shinrai 1.12.2 with ⚔️ Classic PvP";
+        else
+            LaunchBtnSubtitleText.Text = $"Shinrai {versionOrEdition} with 💎 Vanilla+";
+    }
+
     // ==================== QUICK PROFILE SELECTION ====================
     private void QuickSelect12111Sodium_Click(object sender, RoutedEventArgs e) => SelectOrTargetJavaVersion("1.21.11-Sodium");
     private void QuickSelect12111Vanilla_Click(object sender, RoutedEventArgs e) => SelectOrTargetJavaVersion("1.21.11");
@@ -179,7 +211,7 @@ public partial class MainWindow : Window
         _config.SelectedJavaVersion = targetId;
         _config.Save();
         RefreshInstalledVersions();
-        LaunchGameBtn.Content = $"▶  LAUNCH {targetId.ToUpperInvariant()}";
+        UpdateHeroLaunchButtonLabels(targetId);
         BottomEditionBadge.Text = $"{targetId.ToUpperInvariant()} • LUNAR";
     }
 
@@ -196,7 +228,7 @@ public partial class MainWindow : Window
             JavaEditionCard.Visibility = Visibility.Collapsed;
             BedrockEditionCard.Visibility = Visibility.Visible;
             BottomEditionBadge.Text = "BEDROCK EDITION";
-            LaunchGameBtn.Content = "▶  LAUNCH BEDROCK";
+            UpdateHeroLaunchButtonLabels("Bedrock");
             RefreshBedrockStatus();
         }
         else
@@ -227,14 +259,14 @@ public partial class MainWindow : Window
             var match = versions.FirstOrDefault(v => v.Id.Equals(_config.SelectedJavaVersion, StringComparison.OrdinalIgnoreCase)) ?? versions[0];
             JavaVersionComboBox.SelectedItem = match;
             VersionStatusHintText.Text = $"✓ {versions.Count} yerel profil hazır (1.21.11 Sodium/Vanilla & 1.12.2).";
-            LaunchGameBtn.Content = $"▶  LAUNCH {match.Id.ToUpperInvariant()}";
+            UpdateHeroLaunchButtonLabels(match.Id);
             BottomEditionBadge.Text = $"{match.Id.ToUpperInvariant()} • LUNAR";
         }
         else
         {
-            VersionStatusHintText.Text = "⚠️ Sürümleri tek tıkla kurmak için soldaki '⚡ 1.21.11 + Sodium & 1.12.2 Otomatik Kur' butonuna basın.";
-            JavaRuntimeStatusText.Text = "Kurulum bekleniyor";
-            LaunchGameBtn.Content = $"▶  LAUNCH {_config.SelectedJavaVersion.ToUpperInvariant()}";
+            VersionStatusHintText.Text = "⚠️ LAUNCH butonuna bastığınızda tüm sürümler otomatik kurulacaktır.";
+            JavaRuntimeStatusText.Text = "Otomatik Kurulum Hazır";
+            UpdateHeroLaunchButtonLabels(_config.SelectedJavaVersion);
         }
     }
 
@@ -245,7 +277,7 @@ public partial class MainWindow : Window
             _config.SelectedJavaVersion = item.Id;
             if (!_isInitializing) _config.Save();
 
-            LaunchGameBtn.Content = $"▶  LAUNCH {item.Id.ToUpperInvariant()}";
+            UpdateHeroLaunchButtonLabels(item.Id);
             BottomEditionBadge.Text = $"{item.Id.ToUpperInvariant()} • LUNAR";
 
             string? javaPath = JavaLaunchEngine.FindJavaExecutable(_config, item.RequiredJavaMajor);
@@ -984,6 +1016,13 @@ public partial class MainWindow : Window
                 if (proc != null)
                 {
                     UpdateProgress(100, $"Minecraft {targetId} çalışıyor (Oyuncu: {_config.Username})");
+                    if (InstancesRunningText != null)
+                        InstancesRunningText.Text = "1 Instance Running ↗";
+                    proc.Exited += (_, _) => Dispatcher.InvokeAsync(() =>
+                    {
+                        if (InstancesRunningText != null)
+                            InstancesRunningText.Text = "0 Instances Running ↗";
+                    });
                 }
             }
         }
